@@ -3,6 +3,5 @@
 .project
 .agignore
 .settings
-/build/
 /bin/
 /target/
