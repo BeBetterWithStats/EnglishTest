@@ -4,13 +4,21 @@
 # IMPORTS
 import csv
 import random
+import os
 # FIN -- IMPORTS
 
 
 # METHODES
-def type_an_answer(word, language):
-	answer = input("\n>> Translate " + word + " (" + LANGUE[language] + ")" " : ")
-	# print("Vous avez tapé " + answer)
+def list_files(folder_path):
+	files = []
+	for _path, _dirs, _files in os.walk(folder_path):
+		for _file in _files:
+			files.append(_file)
+	return files
+
+
+def type_an_answer(sentence):
+	answer = input(sentence)
 	return answer
 
 
@@ -32,34 +40,53 @@ print("################    ENGLISH VOCABULAR TEST   ################")
 print("#############################################################")
 
 LANGUE = ["EN", "FR"]
+ROOT = "/Users/alexandrelods/Documents/Developpement/EnglishTest/files/"
 
-en_words = build_words_list('/Users/alexandrelods/Documents/Developpement/EnglishTest/files/anglais - adverbes.csv', LANGUE.index("EN"))
-fr_words = build_words_list('/Users/alexandrelods/Documents/Developpement/EnglishTest/files/anglais - adverbes.csv', LANGUE.index("FR"))
 
-#print( len(en_words))
-#print( random.randrange(len(en_words)))
-#print( random.randint(0, 1))
+# STEP 1 : select a file test
 
+files = [x for x in list_files(ROOT) if str(x).endswith('.csv')]
+sentence = "\n## STEP 1 ## Select a file :"
+for f in files:
+	sentence += "\n" + str(files.index(f)) + " : " + f
+selected_file = type_an_answer(sentence + "\n>> ")
+
+en_words = build_words_list(ROOT + files[int(selected_file)], LANGUE.index("EN"))
+fr_words = build_words_list(ROOT + files[int(selected_file)], LANGUE.index("FR"))
+
+
+# STEP 2 : test knowledge
 score = 0
 
+type_an_answer("\n## STEP 1 ## Are you ready ?")
+
 for i in range(10):
-	index_choice = random.randrange(len(en_words))
-	languague_choix = random.randrange(2)
-	if (languague_choix == LANGUE.index("EN")):
-		if (type_an_answer( en_words[index_choice], LANGUE.index("EN")).lower() == fr_words[index_choice].lower()):
+	selected_language = random.randrange(len(LANGUE))
+	selected_word = random.randrange(len(en_words))
+	
+	if (selected_language == LANGUE.index("EN")):
+
+		sentence = "\nTranslate '" + en_words[selected_word] + "' (EN) :\n>> "
+		if (type_an_answer(sentence).lower() == fr_words[selected_word].lower()):
 			print("*** Yes !")
 			score = score + 1
 		else:
-			print("*** The answer is " + fr_words[index_choice])
-	elif (languague_choix == LANGUE.index("FR")):
-		if (type_an_answer( fr_words[index_choice], LANGUE.index("FR")).lower() == en_words[index_choice].lower()):
+			print("*** The answer was " + fr_words[selected_word])
+
+	elif (selected_language == LANGUE.index("FR")):
+		
+		sentence = "\nTranslate '" + fr_words[selected_word] + "' (FR) :\n>> "
+		if (type_an_answer(sentence).lower() == en_words[selected_word].lower()):
 			print("*** Yes !")
 			score = score + 1
 		else:
-			print("*** The answer is " + en_words[index_choice])
+			# exception coding error, these case will never happened
+			print("*** The answer was " + en_words[selected_word])
+
 	else:
 		print("[ERROR] language does not exist")
 
-print("#### FINAL SCORE : %d / 10\n\n" % score)
+# STEP 3 : print score
+print("\n\n## FINAL SCORE ## %d / 10\n\n" % score)
 
 # FIN -- MAIN CODE
