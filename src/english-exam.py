@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 # IMPORTS
@@ -9,9 +8,9 @@ import os
 
 
 # METHODES
-def list_files(folder_path):
+def list_files(_folder):
 	files = []
-	for _path, _dirs, _files in os.walk(folder_path):
+	for _path, _dirs, _files in os.walk(_folder):
 		for _file in _files:
 			files.append(_file)
 	return files
@@ -36,11 +35,13 @@ def build_words_list(file, row):
 
 # MAIN CODE
 print("#############################################################")
-print("################    ENGLISH VOCABULAR TEST   ################")
+print("#                                                           #")
+print("#                   ENGLISH VOCABULAR TEST                  #")
+print("#                                                           #")
 print("#############################################################")
 
 LANGUE = ["EN", "FR"]
-ROOT = "/Users/alexandrelods/Documents/Developpement/EnglishTest/files/"
+ROOT = "/Users/alexandrelods/Documents/Developpement/PythonCode/files/english"
 
 
 # STEP 1 : select a file test
