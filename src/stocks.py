@@ -57,7 +57,7 @@ def print_executionTime(_start, _finish):
 ##########################################################################
 
 
-def convert_currencies(_from, _to, _amount, _date):
+def _convert_currencies(_from, _to, _amount, _date):
 	# convertir en euro
 	currency_API = CurrencyRates()
 	try:
@@ -68,7 +68,7 @@ def convert_currencies(_from, _to, _amount, _date):
 		return ""
 
 
-def add_stockMarketOrder(_file, _fieldnames,
+def _add_stockMarketOrder(_file, _fieldnames,
 			  _date, _broker, _type, _tickerCode, _isinCode, 	# DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN, 
 			  _quantity, _unitPrice, _amount, _currency):		# QUANTITY, UNIT PRICE, AMOUNT, CURRENCY
 	
@@ -175,7 +175,7 @@ def list_all_stockMarketOrder(_outcome):
 					for row in reader:
 
 						# ajoute à _outcome les données présentes dans chaque fichier du broker
-						add_stockMarketOrder(
+						_add_stockMarketOrder(
 							_outcome, 																# _file
 							FIELDNAMES,
 							datetime.strptime(row["Date"] + " " + row["Heure"], "%d-%m-%Y %H:%M"), 	# _date
@@ -214,7 +214,7 @@ def list_all_stockMarketOrder(_outcome):
 									amount = ""
 
 						# ajoute à _outcome les données présentes dans chaque fichier du broker
-						add_stockMarketOrder(
+						_add_stockMarketOrder(
 							_outcome, 																# _file
 							FIELDNAMES,
 							datetime.strptime(row["Time"], "%Y-%m-%d %H:%M:%S"), 					# _date
@@ -257,7 +257,7 @@ def list_all_stockMarketOrder(_outcome):
 						isin = "TBD" if len(row["Ticker"]) > 0 else "TBD" # value = <value_if_true> if <expression> else <value_if_false>
 						
 						# ajoute à _outcome les données présentes dans chaque fichier du broker
-						add_stockMarketOrder(
+						_add_stockMarketOrder(
 							_outcome, 															# _file
 							FIELDNAMES,
 							date,																# _date
