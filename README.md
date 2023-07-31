@@ -7,6 +7,5 @@ Utilitaire permettant de télécharger la vidéo Youtube dont l'url a été pass
 ```$ python3 youtube-downloader.py <OPT url_video_youtube>```
 
 ### Liste des tâches à traiter
-[ ] Rendre le répertoire de destination paramétrable
-
-[ ] Ajouter un ficher de compte rendu du téléchargement (URL, titre, auteur, date du téléchargement)
+- [ ] Rendre le répertoire de destination paramétrable
+- [ ] Ajouter un ficher de compte rendu du téléchargement (URL, titre, auteur, date du téléchargement)
