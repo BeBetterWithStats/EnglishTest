@@ -4,6 +4,7 @@
 
 import csv
 import os
+import yfinance
 from datetime import datetime
 from forex_python.converter import CurrencyRates
 
@@ -19,8 +20,8 @@ from forex_python.converter import CurrencyRates
 def list_fileNames(_folder):
 	files = []
 	for _path, _dirs, _files in os.walk(_folder):
-		for _file in _files:
-			files.append(_file)
+		for f in _files:
+			files.append(f)
 	return files
 
 # MESSAGE DE DEMARRAGE DU PROGRAMME
@@ -38,7 +39,7 @@ def start_program():
 def menu():
 	print("Taper 1 pour créer un fichier listant l'ensemble des ordres effectués")
 	print("Taper 2 pour créer un fichier listant l'ensemble des dividendes")
-	menu = input("Votre choix : ")
+	menu = input("Votre choix : ").strip()
 	print("-------------------------------------------------------------")
 	return menu
 
@@ -58,19 +59,19 @@ def print_executionTime(_start, _finish):
 
 
 def _convert_currencies(_from, _to, _amount, _date):
-	# convertir en euro
+	
 	currency_API = CurrencyRates()
 	try:
 		return round(currency_API.get_rate(_from, _to, _date) * float(_amount ), 2) if _from != _to else _amount
 	except ValueError:
 		print(f"[DEBUG] _from = '{_from}' & _to = '{_to}' & _date = '{_date}' & _amount = {_amount}")
 		print(f"[DEBUG] fx = '{currency_API.get_rate(_from, _to, _date)}'")
-		return ""
+		return None
 
 
 def _add_stockMarketOrder(_file, _fieldnames,
-			  _date, _broker, _type, _tickerCode, _isinCode, 	# DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN, 
-			  _quantity, _unitPrice, _amount, _currency):		# QUANTITY, UNIT PRICE, AMOUNT, CURRENCY
+	_date, _broker, _type, _tickerCode, _isinCode, 	# DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN, 
+	_quantity, _unitPrice, _amount, _currency):		# QUANTITY, UNIT PRICE, AMOUNT, CURRENCY
 	
 	# controler que _type est une valeur connue
 	# les seules valeurs autorisées sont celles de la variable globale TYPES
@@ -165,7 +166,7 @@ def list_all_stockMarketOrder(_outcome):
 
 			# recherche du broker
 			brocker_to_uppercase = str(f).upper().split(" ")[0]
-			# print(f"[DEBUG] broker = '{brocker_to_uppercase}'")
+			# TODO revoir la recherche de brocker à l'aide de REGEX
 
 			match brocker_to_uppercase:
 				
@@ -283,6 +284,60 @@ def list_all_stockMarketOrder(_outcome):
 
 	return True
 
+def _add_dividend(_file, _fieldnames,
+	_date, _broker, _type, _tickerCode, _isinCode, 	# DATE, BROKER, "DIVIDEND" OR "TAX", TICKER, ISIN, 
+	_amount, _currency):							# AMOUNT, CURRENCY
+
+	# on crée une ligne dans le fichier csv
+	row = {
+			"DATE": _date.strftime("%d/%m/%Y"),
+			"BROKER": _broker,
+			"TYPE": _type,
+			"TICKER": _tickerCode,
+			"ISIN": _isinCode,
+			"AMOUNT": _amount,
+			"CURRENCY": _currency,
+		}
+	# print(f"[DEBUG] row = {row}")
+	
+	writer = csv.DictWriter(_file, fieldnames=_fieldnames)
+	writer.writerow(row)
+
+	return True
+
+# lister l'ensemble des dividendes
+# dans le fichier CSV @param _outcome
+def list_all_dividend(_outcome):
+
+	FIELDNAMES = [
+		'DATE', 
+		'BROKER', 
+		'TYPE', 
+		'TICKER', 
+		'ISIN', 
+		'AMOUNT', 
+		'CURRENCY'
+		]
+	
+	# initialisation du fichier de résultat
+	writer = csv.DictWriter(_outcome, fieldnames=FIELDNAMES)
+	writer.writeheader()
+
+	# pour chaque fichier .csv trouvé dans le répertoire PATH
+	for f in [x for x in list_fileNames(PATH) if str(x).endswith('.csv')] :
+		
+		print(f"[INFO] Lecture du fichier '{PATH}/{f}'")
+		
+		with open(PATH + "/" + f) as file:
+			reader = csv.DictReader(file)
+
+			# recherche du broker
+			brocker_to_uppercase = str(f).upper().split(" ")[0]
+			# print(f"[DEBUG] broker = '{brocker_to_uppercase}'")
+
+	return True
+
+
 # MAIN CODE
 PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/files/stocks"
 ORDERS = ["BUY", "SELL"]
@@ -295,13 +350,23 @@ print()
 match menu():
 	case "1":
 		print()
-		print(f"Le résultat sera disponible dans {PATH}/allstockmarketorders.csv")
+		print(f"Le résultat sera disponible dans {PATH}/allstockmarket-orders.csv")
 		print()
 		print("-------------------------------------------------------------")
 		print()
-		list_all_stockMarketOrder(open(PATH + "/allstockmarketorders.csv", "w"))
+		list_all_stockMarketOrder(open(PATH + "/allstockmarket-orders.csv", "w"))
 	case "2":
-		print("[ERROR] Choix non implémenté")
+		print()
+		print(f"Le résultat sera disponible dans {PATH}/allstockmarket-dividend.csv")
+		print()
+		print("-------------------------------------------------------------")
+		print()
+		list_all_stockMarketOrder(open(PATH + "/allstockmarket-dividend.csv", "w"))
+	case "test":
+		msft = yfinance.Ticker("MSFT")
+		print("isin = " + msft.get_isin())
+		print(msft.get_dividends())
+		print(msft.get_info())
 	case _:
 		print("[ERROR] Choix non implémenté")
 
