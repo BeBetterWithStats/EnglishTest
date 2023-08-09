@@ -31,3 +31,4 @@ Vous pourrez sélectionner une des deux fonctionnalités actuellement implément
 ### Liste des tâches à traiter
 - [ ] Rendre le répertoire contenant les fichiers des brokers paramétrable
 - [ ] Ajouter un compte rendu de l'importation des fichiers (nb d'opérations retenues, nb d'opérations exclues)
+- [ ] Revoir la méthode de recherche du nom du brocker lors du parcours des fichiers

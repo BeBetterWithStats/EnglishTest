@@ -54,9 +54,9 @@ start = start_program()
 
 
 if len(argv) != 2:
-    link = input("Quelle est l'URL de la vidéo youtube à télécharger ? ")
+    link = input("Quelle est l'URL de la vidéo youtube à télécharger ? ").strip()
 else :
-    link = argv[1]
+    link = argv[1].strip
 
 print(f"[INFO] Téléchargement de la vidéo '{link}'")
 
