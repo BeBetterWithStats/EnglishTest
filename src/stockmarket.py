@@ -112,26 +112,27 @@ def _find_broker(_file):
 	return None 
 
 def _add_stockMarketOrder(_file, _fieldnames,
-	_date, _broker, _type, _tickerCode, _isinCode, 	# DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN, 
-	_quantity, _unitPrice, _amount, _currency):		# QUANTITY, UNIT PRICE, AMOUNT, CURRENCY
+	_date, _broker, _type, _tickerCode, _isinCode, # DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN, 
+	_quantity, _unitPrice, _amount, _currency, # QUANTITY, UNIT PRICE, AMOUNT, CURRENCY
+	_row:str):
 	
 	# controler que _type est une valeur connue
 	# les seules valeurs autorisées sont celles de la variable globale TYPES
 	if len([x for x in ORDERS if str(x) == _type]) == 0:
-		print(f"[ERROR] le paramètre _type n'est pas géré par l'application (valeur = '{_type}' pour {_broker})")
+		print(f"[ERROR] ligne échappée {_row} RAISON = _type (valeur = '{_type}') n'est pas géré ")
 		return False # sort de la méthode
 	
 	# controler que _quantity est un nombre positif ou nul
 	try:
 		float(_quantity)
-		if (float(_quantity) < 0):
-			print(f"[ERROR] le paramètre _quantity devrait être positif ou égal à 0, ce n'est pas le cas pour {_broker} ")
-			return False # sort de la méthode
-		
 	except ValueError:
-		print(f"[ERROR] le paramètre _quantity n'est pas convertible en float (valeur = '{_quantity}' pour {_broker})")
+		print(f"[ERROR] ligne échappée {_row} RAISON = _quantity (valeur = '{_quantity}') n'est pas convertible en float,")
 		return False # sort de la méthode
 	
+	if (float(_quantity) < 0):
+		print(f"[ERROR] ligne échappée {_row} RAISON = _quantity (valeur = '{_quantity}') devrait être positif ou égal à 0,")
+		return False # sort de la méthode
+		
 	# controler que _date est une date
 	# @TODO
 
@@ -139,25 +140,24 @@ def _add_stockMarketOrder(_file, _fieldnames,
 	# controler que _unitPrice est un nombre positif ou nul
 	try:
 		float(_unitPrice)
-		if (float(_unitPrice) < 0):
-			print(f"[ERROR] le paramètre _unitPrice devrait être positif ou égal à 0, ce n'est pas le cas pour {_broker} ")
-			return False # sort de la méthode
-		
 	except ValueError:
-		print(f"[ERROR] le paramètre _unitPrice n'est pas convertible en float (valeur = '{_unitPrice}' pour {_broker})")
+		print(f"[ERROR] ligne échappée {_row} RAISON = _unitPrice (valeur = '{_unitPrice}') n'est pas convertible en float,")
 		return False # sort de la méthode
 	
+	if (float(_unitPrice) < 0):
+		print(f"[ERROR] ligne échappée {_row} RAISON = _unitPrice (valeur = '{_unitPrice}') devrait être positif ou égal à 0,")
+		return False # sort de la méthode
+		
 	# controler que _amount est un nombre positif ou nul
 	try:
 		float(_amount)
-		if (float(_amount) < 0):
-			print(f"[ERROR] le paramètre _amount devrait être positif ou égal à 0, ce n'est pas le cas pour {_broker} ")
-			return False # sort de la méthode
-		
 	except ValueError:
-		print(f"[ERROR] le paramètre _amount n'est pas convertible en float (valeur = '{_amount}' pour {_broker})")
+		print(f"[ERROR] ligne échappée {_row} RAISON = _amount (valeur = '{_amount}') n'est pas convertible en float,")
 		return False # sort de la méthode
 	
+	if (float(_amount) < 0):
+		print(f"[ERROR] ligne échappée {_row} RAISON = _amount (valeur = '{_amount}') devrait être positif ou égal à 0,")
+		return False # sort de la méthode
 
 	# on crée une ligne dans le fichier csv
 	row = {
@@ -216,7 +216,7 @@ def _add_dividend(_file, _fieldnames,
 ##########################################################################
 
 # lister l'ensemble des ordres de bourse
-# dans le fichier CSV @param _outcome
+# dans le fichier CSV fourni en paramètre _outcome
 def list_all_stockMarketOrder(_outcome):
 	
 	FIELDNAMES = [
@@ -244,37 +244,24 @@ def list_all_stockMarketOrder(_outcome):
 			reader = csv.DictReader(file)
 
 			# recherche du broker
-			brocker_to_uppercase = str(f).upper().split(" ")[0]
-			# TODO revoir la recherche de brocker à l'aide de REGEX
-
-			match brocker_to_uppercase:
-				
-				case "DEGIRO":
-
-					# pour chaque ligne du fichier du broker
-					for row in reader:
-
-						# ajoute à _outcome les données présentes dans chaque fichier du broker
-						_add_stockMarketOrder(
-							_outcome, 																# _file
-							FIELDNAMES,
-							datetime.strptime(row["Date"] + " " + row["Heure"], "%d-%m-%Y %H:%M"), 	# _date
-							brocker_to_uppercase, 													# _broker
-							"BUY" if float(row["Montant"]) < 0 else "SELL",							# _buyOrSell
-																									#      value = <value_if_true> if <expression> else <value_if_false>
-							"NA", 																	# _tickerCode
-							row["Code ISIN"], 														# _isinCode
-							abs(float(row["Quantité"])),											# _quantity
-							row["Cours"],															# _unitPrice
-							str(row["Montant devise locale"]).replace(",", "").replace("-",""),		# _amount
-							row["Devise"]															# _currency
-							)
+			brocker_to_uppercase = str(f).upper().split(" ")[0] # TODO revoir la recherche de brocker à l'aide de REGEX
+			
+			# pour chaque ligne du fichier csv
+			for row in reader:
 						
-				case "TRADING212":
+				match brocker_to_uppercase:
 					
-					# pour chaque ligne du fichier du broker
-					for row in reader:
-
+					case "DEGIRO":
+						date = datetime.strptime(row["Date"] + " " + row["Heure"], "%d-%m-%Y %H:%M")
+						type = "BUY" if float(row["Montant"]) < 0 else "SELL" 	# value = <value_if_true> if <expression> else <value_if_false>
+						isin = row["Code ISIN"]
+						ticker = "NA"
+						quantity = abs(float(row["Quantité"]))
+						price = row["Cours"]
+						amount = str(row["Montant devise locale"]).replace(",", "").replace("-","")
+						currency = row["Devise"]
+							
+					case "TRADING212":
 						# mapping du type d'opération
 						match str(row["Action"]).upper(): 
 								case "MARKET BUY": 
@@ -293,26 +280,12 @@ def list_all_stockMarketOrder(_outcome):
 									price = ""
 									amount = ""
 
-						# ajoute à _outcome les données présentes dans chaque fichier du broker
-						_add_stockMarketOrder(
-							_outcome, 																# _file
-							FIELDNAMES,
-							datetime.strptime(row["Time"], "%Y-%m-%d %H:%M:%S"), 					# _date
-							brocker_to_uppercase, 													# _broker
-							type,																	# _buyOrSell
-							row["Ticker"], 															# _tickerCode
-							row["ISIN"], 															# _isinCode
-							quantity,																# _quantity
-							price,																	# _unitPrice
-							amount,																	# _amount
-							row["Currency (Price / share)"]											# _currency
-							)
-					
-				case "REVOLUT":
-
-					# pour chaque ligne du fichier du broker
-					for row in reader:
+						date = datetime.strptime(row["Time"], "%Y-%m-%d %H:%M:%S")
+						ticker = row["Ticker"]
+						isin = row["ISIN"]
+						currency = row["Currency (Price / share)"]
 							
+					case "REVOLUT":
 						# mapping du type d'opération
 						match str(row["Type"]).upper(): 
 								case "BUY - MARKET": 
@@ -336,31 +309,37 @@ def list_all_stockMarketOrder(_outcome):
 						# trouver l'isin à partir du ticker
 						isin = "TBD" if len(row["Ticker"]) > 0 else "TBD" # value = <value_if_true> if <expression> else <value_if_false>
 						
-						# ajoute à _outcome les données présentes dans chaque fichier du broker
-						_add_stockMarketOrder(
-							_outcome, 															# _file
-							FIELDNAMES,
-							date,																# _date
-							brocker_to_uppercase, 												# _broker
-							type,																# _buyOrSell
-							row["Ticker"], 														# _tickerCode
-							"NA",																# _isinCode
-							quantity,															# _quantity
-							price,																# _unitPrice
-							amount,																# _amount
-							row["Currency"],													# _currency
-							)
-						
-				case "BOURSORAMA":
-					print(f"[ERROR] Broker '{brocker_to_uppercase}' non géré")
-					print(f"[ERROR] développement en attente de la mise à disposition d'une extraction complète par '{brocker_to_uppercase}'")
+						ticker = row["Ticker"]
+						currency = row["Currency"]
+							
+					case "BOURSORAMA":
+						print(f"[ERROR] Broker '{brocker_to_uppercase}' non géré")
+						print(f"[ERROR] développement en attente de la mise à disposition d'une extraction complète par '{brocker_to_uppercase}'")
+						break
 
-				case _:
-					print(f"[ERROR] Broker '{brocker_to_uppercase}' non géré")
-					print(f"[ERROR] Revoir le nom du fichier")
-					print(f"[ERROR] ou ajouter le broker au programme stocks.py")
+					case _:
+						print(f"[ERROR] Broker '{brocker_to_uppercase}' non géré")
+						print(f"[ERROR] Revoir le nom du fichier")
+						print(f"[ERROR] ou ajouter le broker au programme stocks.py")
+						break
 
-
+				# ajoute à _outcome les données présentes dans chaque fichier du broker
+				_add_stockMarketOrder(
+					_outcome, 
+					FIELDNAMES, 
+					date, 
+					brocker_to_uppercase, 
+					type, 
+					ticker, 
+					isin, 
+					quantity, 
+					price, 
+					amount, 
+					currency, 
+					row.__str__()
+					)
+	
+	# Sortie OK lorsque toutes les lignes ont été insérées
 	return True
 
 
@@ -460,13 +439,13 @@ def main():
 			print()
 			list_all_dividend(open(PATH + "/allstockmarket-dividend.csv", "w"))
 
-		case "test_yfinance":
+		case "test_yfinance()":
 			msft = yfinance.Ticker("MSFT")
 			print("isin = " + msft.get_isin())
 			print(msft.get_dividends())
 			print(msft.get_info())
 
-		case "test_find_broker":
+		case "_find_broker()":
 			print()
 			print(f"Parcourir le répertoire {PATH}")
 			print()
