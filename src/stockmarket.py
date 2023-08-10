@@ -68,6 +68,41 @@ def _convert_currencies(_from, _to, _amount, _date):
 		print(f"[DEBUG] fx = '{currency_API.get_rate(_from, _to, _date)}'")
 		return None
 
+def _find_broker(_file):
+
+	print(f"[INFO] Lecture du fichier '{PATH}/{_file}'")
+	
+	FIELDNAMES_DEGIRO_ACCOUNT = ['Date','Heure','Date de','Produit','Code ISIN','Description','FX','Mouvements','','Solde','','ID Ordre']
+	FIELDNAMES_DEGIRO_TRANSACTIONS = ['Date','Heure','Produit','Code ISIN','Place boursiè','Lieu d\'exécution','Quantité','Cours','Devise','Montant devise locale','','Montant','','Taux de change','Frais de courtage','','Montant négocié','','ID Ordre']
+	FIELDNAMES_REVOLUT = ['Date','Ticker','Type','Quantity','Price per share','Total Amount','Currency','FX Rate']
+	FIELDNAMES_TRADING212_VERSION1 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','Notes','ID','Currency conversion fee','Currency (Currency conversion fee)']
+	FIELDNAMES_TRADING212_VERSION2 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','ID','Currency conversion fee','Currency (Currency conversion fee)']
+	FIELDNAMES_TRADING212_VERSION3 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','Notes','ID']
+
+	with open(PATH + "/" + _file) as file:
+
+		reader = csv.DictReader(file)
+		
+		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_ACCOUNT):
+			return "DEGIRO", "DIVIDEND"
+
+		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_TRANSACTIONS):
+			return "DEGIRO", "STOCKS"
+
+		if reader.fieldnames.__eq__(FIELDNAMES_REVOLUT):
+			return "REVOLUT", ""
+		
+		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_VERSION1):
+			return "TRADING212", ""
+
+		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_VERSION2):
+			return "TRADING212", ""
+
+		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_VERSION3):
+			return "TRADING212", ""
+
+	print(reader.fieldnames)
+	return None 
 
 def _add_stockMarketOrder(_file, _fieldnames,
 	_date, _broker, _type, _tickerCode, _isinCode, 	# DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN, 
@@ -288,6 +323,12 @@ def _add_dividend(_file, _fieldnames,
 	_date, _broker, _type, _tickerCode, _isinCode, 	# DATE, BROKER, "DIVIDEND" OR "TAX", TICKER, ISIN, 
 	_amount, _currency):							# AMOUNT, CURRENCY
 
+	# controler que _type est une valeur connue
+	# les seules valeurs autorisées sont celles de la variable globale TYPES
+	if len([x for x in ORDERS if str(x) == _type]) == 0:
+		print(f"[ERROR] le paramètre _type n'est pas géré par l'application (valeur = '{_type}' pour {_broker})")
+		return False # sort de la méthode
+	
 	# on crée une ligne dans le fichier csv
 	row = {
 			"DATE": _date.strftime("%d/%m/%Y"),
@@ -298,7 +339,6 @@ def _add_dividend(_file, _fieldnames,
 			"AMOUNT": _amount,
 			"CURRENCY": _currency,
 		}
-	# print(f"[DEBUG] row = {row}")
 	
 	writer = csv.DictWriter(_file, fieldnames=_fieldnames)
 	writer.writerow(row)
@@ -335,42 +375,99 @@ def list_all_dividend(_outcome):
 			brocker_to_uppercase = str(f).upper().split(" ")[0]
 			# print(f"[DEBUG] broker = '{brocker_to_uppercase}'")
 
+			# TODO revoir la recherche de brocker à l'aide de REGEX
+
+			match brocker_to_uppercase:
+				
+				case "DEGIRO":
+					
+					# pour chaque ligne du fichier du broker
+					for row in reader:
+
+						# mapping du type d'opération
+						match str(row["Description"]).upper().split(): 
+								case "DIVIDENDE": 
+									type = ORDERS[2] 
+								case "IMPOTS SUR DIVIDENDE": 
+									type = ORDERS[3]
+								case _: 
+									type = row["Description"]
+
+						# ajoute à _outcome les données présentes dans chaque fichier du broker
+						_add_dividend(
+							_outcome, 																# _file
+							FIELDNAMES,
+							datetime.strptime(row["Date"] + " " + row["Heure"], "%d-%m-%Y %H:%M"), 	# _date
+							brocker_to_uppercase, 													# _broker
+							type,																	# _type
+							"NA", 																	# _tickerCode
+							row["Code ISIN"], 														# _isinCode
+							row[""], 
+							row["Mouvements"], 
+						)
+				case _:
+					print(f"[ERROR] Broker '{brocker_to_uppercase}' non géré")
+					print(f"[ERROR] Revoir le nom du fichier")
+					print(f"[ERROR] ou ajouter le broker au programme stocks.py")
+
 	return True
 
 
+
+def main():
+	
+	start = start_program()
+	print()
+	print(f"Mettre les fichiers de vos différents brokers dans {PATH}")
+	print()
+
+	match menu():
+		case "1":
+			print()
+			print(f"Le résultat sera disponible dans {PATH}/allstockmarket-orders.csv")
+			print()
+			print("-------------------------------------------------------------")
+			print()
+			list_all_stockMarketOrder(open(PATH + "/allstockmarket-orders.csv", "w"))
+
+		case "2":
+			print()
+			print(f"Le résultat sera disponible dans {PATH}/allstockmarket-dividend.csv")
+			print()
+			print("-------------------------------------------------------------")
+			print()
+			list_all_dividend(open(PATH + "/allstockmarket-dividend.csv", "w"))
+
+		case "test_yfinance":
+			msft = yfinance.Ticker("MSFT")
+			print("isin = " + msft.get_isin())
+			print(msft.get_dividends())
+			print(msft.get_info())
+
+		case "test_find_broker":
+			print()
+			print(f"Parcourir le répertoire {PATH}")
+			print()
+			print("-------------------------------------------------------------")
+			# pour chaque fichier .csv trouvé dans le répertoire PATH
+			for f in [x for x in list_fileNames(PATH) if str(x).endswith('.csv')] :
+				print(_find_broker(f))
+
+		case _:
+			print("[ERROR] Choix non implémenté")
+
+	finish = end_program()
+	print_executionTime(start, finish)
+
+
+
+
 # MAIN CODE
-PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/files/stocks"
-ORDERS = ["BUY", "SELL"]
+if __name__ == "__main__":
 
-start = start_program()
-print()
-print(f"Mettre les fichiers de vos différents brokers dans {PATH}")
-print()
+	PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/files/stocks"
+	ORDERS = ["BUY", "SELL", "DIVIDEND", "TAX"]
 
-match menu():
-	case "1":
-		print()
-		print(f"Le résultat sera disponible dans {PATH}/allstockmarket-orders.csv")
-		print()
-		print("-------------------------------------------------------------")
-		print()
-		list_all_stockMarketOrder(open(PATH + "/allstockmarket-orders.csv", "w"))
-	case "2":
-		print()
-		print(f"Le résultat sera disponible dans {PATH}/allstockmarket-dividend.csv")
-		print()
-		print("-------------------------------------------------------------")
-		print()
-		list_all_stockMarketOrder(open(PATH + "/allstockmarket-dividend.csv", "w"))
-	case "test":
-		msft = yfinance.Ticker("MSFT")
-		print("isin = " + msft.get_isin())
-		print(msft.get_dividends())
-		print(msft.get_info())
-	case _:
-		print("[ERROR] Choix non implémenté")
-
-finish = end_program()
-print_executionTime(start, finish)
+	main()
 
 
