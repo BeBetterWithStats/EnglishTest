@@ -75,6 +75,7 @@ def _convert_currencies(_from, _to, _amount, _date):
 		print(f"[DEBUG] fx = '{currency_API.get_rate(_from, _to, _date)}'")
 		return None
 
+
 def _find_broker(_file):
 
 	print(f"[INFO] Lecture du fichier '{PATH}/{_file}'")
@@ -110,6 +111,7 @@ def _find_broker(_file):
 
 	print(reader.fieldnames)
 	return None 
+
 
 def _add_stockMarketOrder(_file, _fieldnames,
 	_date, _broker, _type, _tickerCode, _isinCode, # DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN, 
@@ -250,7 +252,7 @@ def list_all_stockMarketOrder(_outcome):
 			for row in reader:
 				
 				# TODO streamer row dans une base de données BIG DATA
-				
+
 				match brocker_to_uppercase:
 					
 					case "DEGIRO":
@@ -461,12 +463,9 @@ def main():
 
 	finish = end_program()
 	print_executionTime(start, finish)
-
 ############ FIN - MAIN #############
 
 if __name__ == "__main__":
-
 	PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/files/stocks"
 	ORDERS = ["BUY", "SELL", "DIVIDEND", "TAX"]
-
 	main()

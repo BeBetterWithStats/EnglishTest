@@ -58,6 +58,8 @@ if len(argv) != 2:
 else :
     link = argv[1].strip
 
+# TODO ajouter un controle de l'url avec une REGEX
+
 print(f"[INFO] Téléchargement de la vidéo '{link}'")
 
 yt = YouTube(link)
