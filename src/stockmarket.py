@@ -13,7 +13,7 @@ from forex_python.converter import CurrencyRates
 
 
 ##########################################################################
-# FONCTION UTILITAIRE A RECOPIER
+# FONCTIONS UTILITAIRES A RECOPIER
 ##########################################################################
 
 # RETOURNER LES NOMS DES FICHIERS D'UN REPERTOIRE PASSE EN PARAMETRE
@@ -55,8 +55,15 @@ def print_executionTime(_start, _finish):
 	print(f"[INFO] execution = {_finish - _start}")
 	print()
 
+# FIN - FONCTIONS UTILITAIRES A RECOPIER
 ##########################################################################
 
+
+
+
+##########################################################################
+# FONCTIONS PRIVEES
+##########################################################################
 
 def _convert_currencies(_from, _to, _amount, _date):
 	
@@ -170,6 +177,43 @@ def _add_stockMarketOrder(_file, _fieldnames,
 	writer.writerow(row)
 
 	return True
+
+
+def _add_dividend(_file, _fieldnames,
+	_date, _broker, _type, _tickerCode, _isinCode, 	# DATE, BROKER, "DIVIDEND" OR "TAX", TICKER, ISIN, 
+	_amount, _currency):							# AMOUNT, CURRENCY
+
+	# controler que _type est une valeur connue
+	# les seules valeurs autorisées sont celles de la variable globale TYPES
+	if len([x for x in ORDERS if str(x) == _type]) == 0:
+		print(f"[ERROR] le paramètre _type n'est pas géré par l'application (valeur = '{_type}' pour {_broker})")
+		return False # sort de la méthode
+	
+	# on crée une ligne dans le fichier csv
+	row = {
+			"DATE": _date.strftime("%d/%m/%Y"),
+			"BROKER": _broker,
+			"TYPE": _type,
+			"TICKER": _tickerCode,
+			"ISIN": _isinCode,
+			"AMOUNT": _amount,
+			"CURRENCY": _currency,
+		}
+	
+	writer = csv.DictWriter(_file, fieldnames=_fieldnames)
+	writer.writerow(row)
+
+	return True
+
+
+# FIN - FONCTIONS PRIVEES
+##########################################################################
+
+
+
+##########################################################################
+# FONCTIONS EXPOSABLES
+##########################################################################
 
 # lister l'ensemble des ordres de bourse
 # dans le fichier CSV @param _outcome
@@ -319,31 +363,6 @@ def list_all_stockMarketOrder(_outcome):
 
 	return True
 
-def _add_dividend(_file, _fieldnames,
-	_date, _broker, _type, _tickerCode, _isinCode, 	# DATE, BROKER, "DIVIDEND" OR "TAX", TICKER, ISIN, 
-	_amount, _currency):							# AMOUNT, CURRENCY
-
-	# controler que _type est une valeur connue
-	# les seules valeurs autorisées sont celles de la variable globale TYPES
-	if len([x for x in ORDERS if str(x) == _type]) == 0:
-		print(f"[ERROR] le paramètre _type n'est pas géré par l'application (valeur = '{_type}' pour {_broker})")
-		return False # sort de la méthode
-	
-	# on crée une ligne dans le fichier csv
-	row = {
-			"DATE": _date.strftime("%d/%m/%Y"),
-			"BROKER": _broker,
-			"TYPE": _type,
-			"TICKER": _tickerCode,
-			"ISIN": _isinCode,
-			"AMOUNT": _amount,
-			"CURRENCY": _currency,
-		}
-	
-	writer = csv.DictWriter(_file, fieldnames=_fieldnames)
-	writer.writerow(row)
-
-	return True
 
 # lister l'ensemble des dividendes
 # dans le fichier CSV @param _outcome
@@ -412,8 +431,11 @@ def list_all_dividend(_outcome):
 
 	return True
 
+# FIN - FONCTIONS EXPOSABLES
+##########################################################################
 
 
+############ MAIN #############
 def main():
 	
 	start = start_program()
@@ -422,7 +444,7 @@ def main():
 	print()
 
 	match menu():
-		case "1":
+		case "1": # LISTER TOUTES LES OPERATIONS ACHAT / VENTE DE TITRE
 			print()
 			print(f"Le résultat sera disponible dans {PATH}/allstockmarket-orders.csv")
 			print()
@@ -430,7 +452,7 @@ def main():
 			print()
 			list_all_stockMarketOrder(open(PATH + "/allstockmarket-orders.csv", "w"))
 
-		case "2":
+		case "2": # LISTER LES DIVIDENDES VERSES & LES IMPOTS DEJA PRELEVES
 			print()
 			print(f"Le résultat sera disponible dans {PATH}/allstockmarket-dividend.csv")
 			print()
@@ -459,15 +481,11 @@ def main():
 	finish = end_program()
 	print_executionTime(start, finish)
 
+############ FIN - MAIN #############
 
-
-
-# MAIN CODE
 if __name__ == "__main__":
 
 	PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/files/stocks"
 	ORDERS = ["BUY", "SELL", "DIVIDEND", "TAX"]
 
 	main()
-
-
