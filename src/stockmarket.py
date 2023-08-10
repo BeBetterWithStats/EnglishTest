@@ -248,7 +248,9 @@ def list_all_stockMarketOrder(_outcome):
 			
 			# pour chaque ligne du fichier csv
 			for row in reader:
-						
+				
+				# TODO streamer row dans une base de données BIG DATA
+				
 				match brocker_to_uppercase:
 					
 					case "DEGIRO":
