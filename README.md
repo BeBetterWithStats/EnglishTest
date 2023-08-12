@@ -11,7 +11,7 @@ Utilitaire permettant de télécharger la vidéo Youtube dont l'url a été pass
 - [ ] Ajouter un ficher de compte rendu du téléchargement (URL, titre, auteur, date du téléchargement)
 
 ## :chart_with_upwards_trend: Stock Market
-Utilitaire permettant de consolider dans un seul fichier l'ensemble des opérations d'ordre de bourse (Achat / Vente) passées chez différents brokers.
+Utilitaire permettant de consolider dans un seul fichier l'ensemble des opérations sur instruments financiers passées chez différents brokers.
 
 Les plate-formes gérées sont :
 - Revolut
@@ -31,4 +31,4 @@ Vous pourrez sélectionner une des deux fonctionnalités actuellement implément
 ### Liste des tâches à traiter
 - [ ] Rendre le répertoire contenant les fichiers des brokers paramétrable
 - [ ] Ajouter un compte rendu de l'importation des fichiers (nb d'opérations retenues, nb d'opérations exclues)
-- [ ] Revoir la méthode de recherche du nom du brocker lors du parcours des fichiers
+- [x] Revoir la méthode de recherche du nom du brocker lors du parcours des fichiers
