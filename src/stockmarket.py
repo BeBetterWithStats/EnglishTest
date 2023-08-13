@@ -87,11 +87,9 @@ def _convert_currencies(_from, _to, _amount, _date):
 # @return le nom du broker et la liste des types possibles gérés par le fichier
 def _find_broker(_file):
 
-	print(f"[INFO] Lecture du fichier '{PATH}/{_file}'")
-	
 	# LISTER ICI TOUTES LES ENTETES POSSIBLES DE FICHIER CSV
 	FIELDNAMES_DEGIRO_V_1 = ['Date','Heure','Date de','Produit','Code ISIN','Description','FX','Mouvements','','Solde','','ID Ordre']
-	FIELDNAMES_DEGIRO_V_2 = ['Date','Heure','Produit','Code ISIN','Place boursiè','Lieu d\'exécution','Quantité','Cours','Devise','Montant devise locale','','Montant','','Taux de change','Frais de courtage','','Montant négocié','','ID Ordre']
+	FIELDNAMES_DEGIRO_V_2 = ['Date','Heure','Produit','Code ISIN','Place boursiè','Lieu d\'exécution','Quantité','Cours','','Montant devise locale','','Montant','','Taux de change','Frais de courtage','','Montant négocié','','ID Ordre']
 	FIELDNAMES_REVOLUT_V_1 = ['Date','Ticker','Type','Quantity','Price per share','Total Amount','Currency','FX Rate']
 	FIELDNAMES_TRADING212_V_1 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','Notes','ID','Currency conversion fee','Currency (Currency conversion fee)']
 	FIELDNAMES_TRADING212_V_2 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','ID','Currency conversion fee','Currency (Currency conversion fee)']
@@ -280,7 +278,7 @@ def list_all_stockMarket_order(_outcome):
 						quantity = abs(float(row["Quantité"]))
 						price = row["Cours"]
 						amount = str(row["Montant devise locale"]).replace(",", "").replace("-","")
-						currency = row["Devise"]
+						currency = row[""]
 							
 					case "TRADING 212":
 						# mapping du type d'opération
