@@ -221,7 +221,7 @@ def _add_dividend(_file, _fieldnames,
 
 # lister l'ensemble des ordres de bourse
 # dans le fichier CSV fourni en paramètre _outcome
-def list_all_stockMarketOrder(_outcome):
+def list_all_stockMarket_order(_outcome):
 	
 	FIELDNAMES = [
 		'DATE', 
@@ -351,7 +351,7 @@ def list_all_stockMarketOrder(_outcome):
 
 # lister l'ensemble des dividendes
 # dans le fichier CSV @param _outcome
-def list_all_dividend(_outcome):
+def list_all_stockMarket_dividend(_outcome):
 
 	FIELDNAMES = [
 		'DATE', 
@@ -435,7 +435,7 @@ def main():
 			print()
 			print("-------------------------------------------------------------")
 			print()
-			list_all_stockMarketOrder(open(PATH + "/allstockmarket-orders.csv", "w"))
+			list_all_stockMarket_order(open(PATH + "/allstockmarket-orders.csv", "w"))
 
 		case "2": # LISTER LES DIVIDENDES VERSES & LES IMPOTS DEJA PRELEVES
 			print()
@@ -443,7 +443,7 @@ def main():
 			print()
 			print("-------------------------------------------------------------")
 			print()
-			list_all_dividend(open(PATH + "/allstockmarket-dividend.csv", "w"))
+			list_all_stockMarket_dividend(open(PATH + "/allstockmarket-dividend.csv", "w"))
 
 		case "test_yfinance()":
 			msft = yfinance.Ticker("MSFT")
