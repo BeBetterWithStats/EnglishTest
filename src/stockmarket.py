@@ -76,10 +76,12 @@ def _convert_currencies(_from, _to, _amount, _date):
 		return None
 
 
+# @return le nom du broker et la liste des types possibles gérés par le fichier
 def _find_broker(_file):
 
 	print(f"[INFO] Lecture du fichier '{PATH}/{_file}'")
 	
+	# LISTER ICI TOUTES LES ENTETES POSSIBLES DE FICHIER CSV
 	FIELDNAMES_DEGIRO_V_1 = ['Date','Heure','Date de','Produit','Code ISIN','Description','FX','Mouvements','','Solde','','ID Ordre']
 	FIELDNAMES_DEGIRO_V_2 = ['Date','Heure','Produit','Code ISIN','Place boursiè','Lieu d\'exécution','Quantité','Cours','Devise','Montant devise locale','','Montant','','Taux de change','Frais de courtage','','Montant négocié','','ID Ordre']
 	FIELDNAMES_REVOLUT_V_1 = ['Date','Ticker','Type','Quantity','Price per share','Total Amount','Currency','FX Rate']
@@ -91,6 +93,7 @@ def _find_broker(_file):
 
 		reader = csv.DictReader(file)
 		
+		# ALGORITHME DE RECHERCHE EN FONCTION DE L'ENTETE
 		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_V_1):
 			return "DEGIRO", ["DIVIDEND"]
 
@@ -112,7 +115,7 @@ def _find_broker(_file):
 	return None 
 
 
-def _add_stockMarketOrder(_file, _fieldnames,
+def _add_order(_file, _fieldnames,
 	_date, _broker, _type, _tickerCode, _isinCode, # DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN, 
 	_quantity, _unitPrice, _amount, _currency, # QUANTITY, UNIT PRICE, AMOUNT, CURRENCY
 	_row:str):
@@ -327,7 +330,7 @@ def list_all_stockMarketOrder(_outcome):
 						break
 
 				# ajoute à _outcome les données présentes dans chaque fichier du broker
-				_add_stockMarketOrder(
+				_add_order(
 					_outcome, 
 					FIELDNAMES, 
 					date, 
