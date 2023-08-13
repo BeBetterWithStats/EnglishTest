@@ -5,6 +5,7 @@
 import os
 import re
 from pytube import YouTube
+from pytube.exceptions import PytubeError
 from sys import argv
 from datetime import date
 from datetime import datetime
@@ -52,6 +53,7 @@ def print_executionTime(_start, _finish):
 def _is_urlValide(_url):
 	# https://youtu.be/MLu3I8tjKEg
 	# https://www.youtube.com/live/I4eVdFPjVgA?feature=share
+	# https://youtu.be/EM8IgIIiOdY
 	condition = re.search(r"^(https|http):\/\/[www.]*youtu[a-zA-Z0-9_.=?-]+", _url)
 	# condition = re.search(r"^(https|http):\/\/[a-zA-Z0-9.]*youtu[a-zA-Z0-9_.=?-]+", _url)
 	return True if condition else False
@@ -78,9 +80,15 @@ def main():
 	print("[INFO] Titre = '" + yt.title + "'")
 	print("[INFO] Auteur = '" + yt.author + "'")
 
-	yt.streams.get_highest_resolution().download(PATH)
-	print(f"[INFO] Vidéo disponible dans le répertoire '{PATH}'")
+	try:
+		yt.streams.get_highest_resolution().download(PATH)
+		print(f"[INFO] Vidéo disponible dans le répertoire '{PATH}'")
+	except PytubeError as e:
+		print(f"[ERROR] Une erreur est survenue lors du téléchargement : ")
+		print(type(e))
+		print(e.args[0])
 
+		
 	end = end_program()
 	print_executionTime(start, end)
 
@@ -90,6 +98,6 @@ def main():
 
 if __name__ == "__main__":
 
-	link = input("Quelle est l'URL de la vidéo youtube à télécharger ? ").strip()
-	print(_is_urlValide(link))
-	# main()
+	# link = input("Quelle est l'URL de la vidéo youtube à télécharger ? ").strip()
+	# print(_is_urlValide(link))
+	main()
