@@ -11,6 +11,14 @@ from forex_python.converter import CurrencyRates
 # FIN -- IMPORTS
 
 
+PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/data/stocks"
+TYPES = ["BUY", "SELL", "DIVIDEND", "TAX"]
+DEGIRO = "DEGIRO"
+TRADING_212 = "TRADING 212"
+REVOLUT = "REVOLUT"
+BOURSORAMA = "BOURSORAMA"
+INTERACTIVE_BROKER = "INTERACTIVE BROKER"
+
 
 ##########################################################################
 # FONCTIONS UTILITAIRES A RECOPIER
@@ -92,27 +100,30 @@ def _find_broker(_file):
 	with open(PATH + "/" + _file) as file:
 
 		reader = csv.DictReader(file)
-		
+
+		if not reader.fieldnames:
+			return "", None
+
 		# ALGORITHME DE RECHERCHE EN FONCTION DE L'ENTETE
 		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_V_1):
-			return "DEGIRO", ["DIVIDEND"]
+			return DEGIRO, ["_add_dividend"]
 
 		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_V_2):
-			return "DEGIRO", ["STOCKS"]
+			return DEGIRO, ["_add_order"]
 
 		if reader.fieldnames.__eq__(FIELDNAMES_REVOLUT_V_1):
-			return "REVOLUT", ["DIVIDEND", "STOCKS"]
+			return REVOLUT, ["_add_dividend", "_add_order"]
 		
 		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_1):
-			return "TRADING212", ["DIVIDEND", "STOCKS"]
+			return TRADING_212, ["_add_dividend", "_add_order"]
 
 		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_2):
-			return "TRADING212", ["DIVIDEND", "STOCKS"]
+			return TRADING_212, ["_add_dividend", "_add_order"]
 
 		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_3):
-			return "TRADING212", ["DIVIDEND", "STOCKS"]
+			return TRADING_212, ["_add_dividend", "_add_order"]
 
-	return None 
+	return "", None
 
 
 def _add_order(_file, _fieldnames,
@@ -248,14 +259,18 @@ def list_all_stockMarket_order(_outcome):
 			reader = csv.DictReader(file)
 
 			# recherche du broker
-			brocker_to_uppercase = str(f).upper().split(" ")[0] # TODO revoir la recherche de brocker à l'aide de REGEX
-			
+			brocker = _find_broker(str(f))
+
+			# si le fichier du brocker n'est pas compatible avec la fonctionnalité
+			if not brocker[1] or not "_add_order" in brocker[1]:
+				continue
+
 			# pour chaque ligne du fichier csv
 			for row in reader:
 				
 				# TODO streamer row dans une base de données BIG DATA
 
-				match brocker_to_uppercase:
+				match brocker[0]:
 					
 					case "DEGIRO":
 						date = datetime.strptime(row["Date"] + " " + row["Heure"], "%d-%m-%Y %H:%M")
@@ -267,7 +282,7 @@ def list_all_stockMarket_order(_outcome):
 						amount = str(row["Montant devise locale"]).replace(",", "").replace("-","")
 						currency = row["Devise"]
 							
-					case "TRADING212":
+					case "TRADING 212":
 						# mapping du type d'opération
 						match str(row["Action"]).upper(): 
 								case "MARKET BUY": 
@@ -318,13 +333,8 @@ def list_all_stockMarket_order(_outcome):
 						ticker = row["Ticker"]
 						currency = row["Currency"]
 							
-					case "BOURSORAMA":
-						print(f"[ERROR] Broker '{brocker_to_uppercase}' non géré")
-						print(f"[ERROR] développement en attente de la mise à disposition d'une extraction complète par '{brocker_to_uppercase}'")
-						break
-
 					case _:
-						print(f"[ERROR] Broker '{brocker_to_uppercase}' non géré")
+						print(f"[ERROR] Broker '{brocker}' non géré")
 						print(f"[ERROR] Revoir le nom du fichier")
 						print(f"[ERROR] ou ajouter le broker au programme stocks.py")
 						break
@@ -334,7 +344,7 @@ def list_all_stockMarket_order(_outcome):
 					_outcome, 
 					FIELDNAMES, 
 					date, 
-					brocker_to_uppercase, 
+					brocker[0], 
 					type, 
 					ticker, 
 					isin, 
@@ -468,6 +478,4 @@ def main():
 ############ FIN - MAIN #############
 
 if __name__ == "__main__":
-	PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/files/stocks"
-	TYPES = ["BUY", "SELL", "DIVIDEND", "TAX"]
 	main()
