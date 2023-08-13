@@ -68,9 +68,6 @@ def main():
 	else :
 		link = argv[1].strip
 
-	# TODO ajouter un controle de l'url avec une REGEX
-	# https://youtu.be/MLu3I8tjKEg
-	# https://www.youtube.com/live/I4eVdFPjVgA?feature=share
 	if not _is_urlValide(link):
 		return print(f"[ERROR] le lien de téléchargement '{link}' n'est pas valide")
 
