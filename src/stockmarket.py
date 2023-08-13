@@ -80,36 +80,35 @@ def _find_broker(_file):
 
 	print(f"[INFO] Lecture du fichier '{PATH}/{_file}'")
 	
-	FIELDNAMES_DEGIRO_ACCOUNT = ['Date','Heure','Date de','Produit','Code ISIN','Description','FX','Mouvements','','Solde','','ID Ordre']
-	FIELDNAMES_DEGIRO_TRANSACTIONS = ['Date','Heure','Produit','Code ISIN','Place boursiè','Lieu d\'exécution','Quantité','Cours','Devise','Montant devise locale','','Montant','','Taux de change','Frais de courtage','','Montant négocié','','ID Ordre']
-	FIELDNAMES_REVOLUT = ['Date','Ticker','Type','Quantity','Price per share','Total Amount','Currency','FX Rate']
-	FIELDNAMES_TRADING212_VERSION1 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','Notes','ID','Currency conversion fee','Currency (Currency conversion fee)']
-	FIELDNAMES_TRADING212_VERSION2 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','ID','Currency conversion fee','Currency (Currency conversion fee)']
-	FIELDNAMES_TRADING212_VERSION3 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','Notes','ID']
+	FIELDNAMES_DEGIRO_V_1 = ['Date','Heure','Date de','Produit','Code ISIN','Description','FX','Mouvements','','Solde','','ID Ordre']
+	FIELDNAMES_DEGIRO_V_2 = ['Date','Heure','Produit','Code ISIN','Place boursiè','Lieu d\'exécution','Quantité','Cours','Devise','Montant devise locale','','Montant','','Taux de change','Frais de courtage','','Montant négocié','','ID Ordre']
+	FIELDNAMES_REVOLUT_V_1 = ['Date','Ticker','Type','Quantity','Price per share','Total Amount','Currency','FX Rate']
+	FIELDNAMES_TRADING212_V_1 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','Notes','ID','Currency conversion fee','Currency (Currency conversion fee)']
+	FIELDNAMES_TRADING212_V_2 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','ID','Currency conversion fee','Currency (Currency conversion fee)']
+	FIELDNAMES_TRADING212_V_3 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','Notes','ID']
 
 	with open(PATH + "/" + _file) as file:
 
 		reader = csv.DictReader(file)
 		
-		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_ACCOUNT):
-			return "DEGIRO", "DIVIDEND"
+		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_V_1):
+			return "DEGIRO", ["DIVIDEND"]
 
-		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_TRANSACTIONS):
-			return "DEGIRO", "STOCKS"
+		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_V_2):
+			return "DEGIRO", ["STOCKS"]
 
-		if reader.fieldnames.__eq__(FIELDNAMES_REVOLUT):
-			return "REVOLUT", ""
+		if reader.fieldnames.__eq__(FIELDNAMES_REVOLUT_V_1):
+			return "REVOLUT", ["DIVIDEND", "STOCKS"]
 		
-		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_VERSION1):
-			return "TRADING212", ""
+		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_1):
+			return "TRADING212", ["DIVIDEND", "STOCKS"]
 
-		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_VERSION2):
-			return "TRADING212", ""
+		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_2):
+			return "TRADING212", ["DIVIDEND", "STOCKS"]
 
-		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_VERSION3):
-			return "TRADING212", ""
+		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_3):
+			return "TRADING212", ["DIVIDEND", "STOCKS"]
 
-	print(reader.fieldnames)
 	return None 
 
 
