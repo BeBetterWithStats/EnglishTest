@@ -188,7 +188,7 @@ def _add_dividend(_file, _fieldnames,
 	_amount, _currency):							# AMOUNT, CURRENCY
 
 	# controler que _type est une valeur connue
-	# les seules valeurs autorisées sont celles de la variable globale ORDERS
+	# les seules valeurs autorisées sont celles de la variable globale TYPES
 	if len([x for x in TYPES if str(x) == _type]) == 0:
 		print(f"[ERROR] le paramètre _type n'est pas géré par l'application (valeur = '{_type}' pour {_broker})")
 		return False # sort de la méthode
