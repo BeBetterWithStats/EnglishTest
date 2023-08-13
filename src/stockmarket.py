@@ -278,7 +278,7 @@ def list_all_stockMarket_order(_outcome):
 						quantity = abs(float(row["Quantité"]))
 						price = row["Cours"]
 						amount = str(row["Montant devise locale"]).replace(",", "").replace("-","")
-						currency = row[""]
+						currency = row[""] #TODO smelly code due to DEGIRO  with several empty fieldnames
 							
 					case "TRADING 212":
 						# mapping du type d'opération

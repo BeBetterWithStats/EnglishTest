@@ -37,3 +37,4 @@ Vous pourrez sélectionner une des deux fonctionnalités actuellement implément
 - [ ] Rendre le répertoire contenant les fichiers des brokers paramétrable
 - [ ] Ajouter un compte rendu de l'importation des fichiers (nb d'opérations retenues, nb d'opérations exclues)
 - [x] Revoir la méthode de recherche du nom du brocker lors du parcours des fichiers
+- [ ] Smelly code due to DEGIRO empty fieldnames
