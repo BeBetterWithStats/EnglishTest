@@ -3,6 +3,11 @@
 ## :movie_camera: Youtube
 Utilitaire permettant de télécharger la vidéo Youtube dont l'url a été passée en paramètre de la ligne de commande. Si le paramètre est absent, une invitation de commande `input()` permettra à l'utilisateur de saisir l'URL de la vidéo.
 
+### Pré-requis
+```$ pip install pytube```
+et ajouter potentiellement le fix https://github.com/pytube/pytube/issues/1199
+
+
 ### Comment lancer le programme
 ```$ python3 youtube.py <OPT url_video_youtube>```
 
