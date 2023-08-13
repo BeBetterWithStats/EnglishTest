@@ -122,7 +122,7 @@ def _add_order(_file, _fieldnames,
 	
 	# controler que _type est une valeur connue
 	# les seules valeurs autorisées sont celles de la variable globale TYPES
-	if len([x for x in ORDERS if str(x) == _type]) == 0:
+	if len([x for x in TYPES if str(x) == _type]) == 0:
 		print(f"[ERROR] ligne échappée {_row} RAISON = _type (valeur = '{_type}') n'est pas géré ")
 		return False # sort de la méthode
 	
@@ -188,8 +188,8 @@ def _add_dividend(_file, _fieldnames,
 	_amount, _currency):							# AMOUNT, CURRENCY
 
 	# controler que _type est une valeur connue
-	# les seules valeurs autorisées sont celles de la variable globale TYPES
-	if len([x for x in ORDERS if str(x) == _type]) == 0:
+	# les seules valeurs autorisées sont celles de la variable globale ORDERS
+	if len([x for x in TYPES if str(x) == _type]) == 0:
 		print(f"[ERROR] le paramètre _type n'est pas géré par l'application (valeur = '{_type}' pour {_broker})")
 		return False # sort de la méthode
 	
@@ -271,12 +271,12 @@ def list_all_stockMarketOrder(_outcome):
 						# mapping du type d'opération
 						match str(row["Action"]).upper(): 
 								case "MARKET BUY": 
-									type = ORDERS[0] 
+									type = TYPES[0] 
 									quantity = row["No. of shares"].replace(",", "").replace("-","")
 									price = row["Price / share"].replace(",", "").replace("-","")
 									amount = round(float(quantity)*float(price),2)
 								case "MARKET SELL": 
-									type = ORDERS[1]
+									type = TYPES[1]
 									quantity = row["No. of shares"].replace(",", "").replace("-","")
 									price = row["Price / share"].replace(",", "").replace("-","")
 									amount = round(float(quantity)*float(price),2)
@@ -295,10 +295,10 @@ def list_all_stockMarketOrder(_outcome):
 						# mapping du type d'opération
 						match str(row["Type"]).upper(): 
 								case "BUY - MARKET": 
-									type = ORDERS[0] 
+									type = TYPES[0] 
 									quantity = row["Quantity"]
 								case "SELL - MARKET": 
-									type = ORDERS[1]
+									type = TYPES[1]
 									quantity = row["Quantity"]
 								case _: 
 									type = row["Type"]
@@ -391,9 +391,9 @@ def list_all_dividend(_outcome):
 						# mapping du type d'opération
 						match str(row["Description"]).upper().split(): 
 								case "DIVIDENDE": 
-									type = ORDERS[2] 
+									type = TYPES[2] 
 								case "IMPOTS SUR DIVIDENDE": 
-									type = ORDERS[3]
+									type = TYPES[3]
 								case _: 
 									type = row["Description"]
 
@@ -469,5 +469,5 @@ def main():
 
 if __name__ == "__main__":
 	PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/files/stocks"
-	ORDERS = ["BUY", "SELL", "DIVIDEND", "TAX"]
+	TYPES = ["BUY", "SELL", "DIVIDEND", "TAX"]
 	main()
