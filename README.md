@@ -39,3 +39,4 @@ Vous pourrez sélectionner une des deux fonctionnalités actuellement implément
 - [x] Revoir la méthode de recherche du nom du brocker lors du parcours des fichiers
 - [ ] Smelly code due to DEGIRO empty fieldnames
 - [x] Mettre les dates au format US (plus facile pour le tri)
+- [ ] Paramètre des méthodes privées ```_add_``` à passer en DictReader ou DictWriter
