@@ -423,14 +423,11 @@ def list_all_stockMarket_dividend(_outcome):
 def get_stockMarket_portfolio(_input, _output):
 
 	FIELDNAMES = [
-		'DATE', 
 		'BROKER', 
-		'TYPE', 
 		'TICKER', 
 		'ISIN', 
 		'QUANTITY', 
 		'UNIT PRICE', 
-		'AMOUNT', 
 		'CURRENCY'
 		]
 	
@@ -484,14 +481,11 @@ def get_stockMarket_portfolio(_input, _output):
 
 	for asset in assets:
 		row = {
-			"DATE": "",
 			"BROKER": "",
-			"TYPE": "",
 			"TICKER": asset,
 			"ISIN": "",
 			"QUANTITY": assets[asset]["quantity"],
 			"UNIT PRICE": assets[asset]["unit price"],
-			"AMOUNT": "",
 			"CURRENCY": assets[asset]["currency"]
 		}
 		writer.writerow(row)
