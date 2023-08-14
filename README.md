@@ -38,4 +38,4 @@ Vous pourrez sélectionner une des deux fonctionnalités actuellement implément
 - [ ] Ajouter un compte rendu de l'importation des fichiers (nb d'opérations retenues, nb d'opérations exclues)
 - [x] Revoir la méthode de recherche du nom du brocker lors du parcours des fichiers
 - [ ] Smelly code due to DEGIRO empty fieldnames
-- [ ] Mettre les dates au format US (plus facile pour le tri)
+- [x] Mettre les dates au format US (plus facile pour le tri)

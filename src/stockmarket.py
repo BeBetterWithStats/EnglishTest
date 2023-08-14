@@ -119,8 +119,8 @@ def _find_broker(_file):
 
 
 def _add_order(_file, _fieldnames,
-	_date, _broker, _type, _tickerCode, _isinCode, # DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN, 
-	_quantity, _unitPrice, _amount, _currency, # QUANTITY, UNIT PRICE, AMOUNT, CURRENCY
+	_date : datetime, _broker : str, _type : str, _tickerCode : str, _isinCode : str, # DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN, 
+	_quantity : float, _unitPrice : float, _amount : float, _currency : str, # QUANTITY, UNIT PRICE, AMOUNT, CURRENCY
 	_row:str):
 	
 	# controler que _type est une valeur connue
@@ -168,7 +168,7 @@ def _add_order(_file, _fieldnames,
 
 	# on crée une ligne dans le fichier csv
 	row = {
-			"DATE": _date.strftime("%d/%m/%Y"),
+			"DATE": _date.strftime("%Y/%m/%d"),
 			"BROKER": _broker,
 			"TYPE": _type,
 			"TICKER": _tickerCode,
@@ -187,8 +187,8 @@ def _add_order(_file, _fieldnames,
 
 
 def _add_dividend(_file, _fieldnames,
-	_date, _broker, _type, _tickerCode, _isinCode, 	# DATE, BROKER, "DIVIDEND" OR "TAX", TICKER, ISIN, 
-	_amount, _currency):							# AMOUNT, CURRENCY
+	_date : datetime, _broker : str, _type : str, _tickerCode : str, _isinCode : str, 	# DATE, BROKER, "DIVIDEND" OR "TAX", TICKER, ISIN, 
+	_amount : float, _currency : str):							# AMOUNT, CURRENCY
 
 	# controler que _type est une valeur connue
 	# les seules valeurs autorisées sont celles de la variable globale TYPES
@@ -198,7 +198,7 @@ def _add_dividend(_file, _fieldnames,
 	
 	# on crée une ligne dans le fichier csv
 	row = {
-			"DATE": _date.strftime("%d/%m/%Y"),
+			"DATE": _date.strftime("%Y/%m/%d"),
 			"BROKER": _broker,
 			"TYPE": _type,
 			"TICKER": _tickerCode,
@@ -227,7 +227,7 @@ def _add_dividend(_file, _fieldnames,
 def list_all_stockMarket_order(_outcome):
 	
 	FIELDNAMES = [
-		'DATE', # TODO mettre la date en notation américaine
+		'DATE', 
 		'BROKER', 
 		'TYPE', 
 		'TICKER', 
