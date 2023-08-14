@@ -13,12 +13,6 @@ from forex_python.converter import CurrencyRates
 
 PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/data/stocks"
 TYPES = ["BUY", "SELL", "DIVIDEND", "TAX"]
-DEGIRO = "DEGIRO"
-TRADING_212 = "TRADING 212"
-REVOLUT = "REVOLUT"
-BOURSORAMA = "BOURSORAMA"
-INTERACTIVE_BROKER = "INTERACTIVE BROKER"
-
 
 ##########################################################################
 # FONCTIONS UTILITAIRES A RECOPIER
@@ -104,22 +98,22 @@ def _find_broker(_file):
 
 		# ALGORITHME DE RECHERCHE EN FONCTION DE L'ENTETE
 		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_V_1):
-			return DEGIRO, ["_add_dividend"]
+			return "DEGIRO", ["_add_dividend"]
 
 		if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_V_2):
-			return DEGIRO, ["_add_order"]
+			return "DEGIRO", ["_add_order"]
 
 		if reader.fieldnames.__eq__(FIELDNAMES_REVOLUT_V_1):
-			return REVOLUT, ["_add_dividend", "_add_order"]
+			return "REVOLUT", ["_add_dividend", "_add_order"]
 		
 		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_1):
-			return TRADING_212, ["_add_dividend", "_add_order"]
+			return "TRADING 212", ["_add_dividend", "_add_order"]
 
 		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_2):
-			return TRADING_212, ["_add_dividend", "_add_order"]
+			return "TRADING 212", ["_add_dividend", "_add_order"]
 
 		if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_3):
-			return TRADING_212, ["_add_dividend", "_add_order"]
+			return "TRADING 212", ["_add_dividend", "_add_order"]
 
 	return "", None
 
@@ -233,7 +227,7 @@ def _add_dividend(_file, _fieldnames,
 def list_all_stockMarket_order(_outcome):
 	
 	FIELDNAMES = [
-		'DATE', 
+		'DATE', # TODO mettre la date en notation américaine
 		'BROKER', 
 		'TYPE', 
 		'TICKER', 
@@ -352,7 +346,8 @@ def list_all_stockMarket_order(_outcome):
 					currency, 
 					row.__str__()
 					)
-	
+	# TODO trier le fichier
+
 	# Sortie OK lorsque toutes les lignes ont été insérées
 	return True
 
@@ -362,7 +357,7 @@ def list_all_stockMarket_order(_outcome):
 def list_all_stockMarket_dividend(_outcome):
 
 	FIELDNAMES = [
-		'DATE', 
+		'DATE',  # TODO mettre la date en notation américaine
 		'BROKER', 
 		'TYPE', 
 		'TICKER', 
@@ -424,6 +419,84 @@ def list_all_stockMarket_dividend(_outcome):
 
 	return True
 
+
+def get_stockMarket_portfolio(_input, _output):
+
+	FIELDNAMES = [
+		'DATE', 
+		'BROKER', 
+		'TYPE', 
+		'TICKER', 
+		'ISIN', 
+		'QUANTITY', 
+		'UNIT PRICE', 
+		'AMOUNT', 
+		'CURRENCY'
+		]
+	
+	assets = {}
+	
+	# initialisation du fichier de résultat
+	reader = csv.DictReader(_input)
+
+	for row in reader:
+		if row["TICKER"] in assets:
+			q1 = float(assets[row["TICKER"]]["quantity"])
+			q2 = float(row["QUANTITY"])
+			p1 = float(assets[row["TICKER"]]["unit price"])
+			p2 = float(row["UNIT PRICE"])
+
+			if row["TYPE"] == "BUY":
+				asset_value = {
+				"quantity": q1 + q2,
+				"unit price": (q1*p1 + q2*p2)/(q1 + q2)if q1 + q2 != 0 else 0,
+				"currency": row["CURRENCY"]
+				}
+			elif row["TYPE"] == "SELL":
+				asset_value = {
+				"quantity": q1 - q2,
+				"unit price": (q1*p1 - q2*p2)/(q1 - q2) if q1 - q2 != 0 else 0,
+				"currency": row["CURRENCY"]
+				}
+			else:
+				continue
+
+		else:
+			if row["TYPE"] == "BUY":
+				asset_value = {
+					"quantity": row["QUANTITY"],
+					"unit price": row["UNIT PRICE"],
+					"currency": row["CURRENCY"]
+				}
+			elif row["TYPE"] == "SELL":
+				asset_value = {
+					"quantity": "-" + row["QUANTITY"],
+					"unit price": "-" + row["UNIT PRICE"],
+					"currency": row["CURRENCY"]
+				}
+			else:
+				continue
+	
+		assets[row["TICKER"]] = asset_value
+
+	writer = csv.DictWriter(_output, fieldnames=FIELDNAMES)
+	writer.writeheader()
+
+	for asset in assets:
+		row = {
+			"DATE": "",
+			"BROKER": "",
+			"TYPE": "",
+			"TICKER": asset,
+			"ISIN": "",
+			"QUANTITY": assets[asset]["quantity"],
+			"UNIT PRICE": assets[asset]["unit price"],
+			"AMOUNT": "",
+			"CURRENCY": assets[asset]["currency"]
+		}
+		writer.writerow(row)
+	return assets
+
 # FIN - FONCTIONS EXPOSABLES
 ##########################################################################
 
@@ -453,13 +526,13 @@ def main():
 			print()
 			list_all_stockMarket_dividend(open(PATH + "/allstockmarket-dividend.csv", "w"))
 
-		case "test_yfinance()":
+		case "_yfinance":
 			msft = yfinance.Ticker("MSFT")
 			print("isin = " + msft.get_isin())
 			print(msft.get_dividends())
 			print(msft.get_info())
 
-		case "_find_broker()":
+		case "_find_broker":
 			print()
 			print(f"Parcourir le répertoire {PATH}")
 			print()
@@ -468,6 +541,12 @@ def main():
 			for f in [x for x in list_fileNames(PATH) if str(x).endswith('.csv')] :
 				print(_find_broker(f))
 
+		case "get_stockMarket_portfolio":
+			print()
+			assets = get_stockMarket_portfolio(
+												open(PATH + "/allstockmarket-orders.csv", "r"),
+												open(PATH + "/portfolio.csv", "w"))
+			
 		case _:
 			print("[ERROR] Choix non implémenté")
 
