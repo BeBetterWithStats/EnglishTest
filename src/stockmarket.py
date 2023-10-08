@@ -41,7 +41,7 @@ def start_program():
 def menu():
 	print("Taper 1 pour créer un fichier listant l'ensemble des ordres effectués")
 	print("Taper 2 pour créer un fichier listant l'ensemble des ordres effectués et classés par ordre chronologique")
-	print("Taper 3 pour donner la répartition de son portefeuille par broker")
+	print("Taper 3 pour donner la répartition de son portefeuille")
 	print("Taper 4 pour créer un fichier listant l'ensemble des dividendes")
 	menu = input("Votre choix : ").strip()
 	print("-------------------------------------------------------------")
