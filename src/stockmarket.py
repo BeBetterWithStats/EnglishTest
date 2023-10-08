@@ -23,7 +23,7 @@ def list_fileNames(_folder):
 	files = []
 	for _path, _dirs, _files in os.walk(_folder):
 		for f in _files:
-			files.append(f)
+			files.append(_path + "/" + f)
 	return files
 
 # MESSAGE DE DEMARRAGE DU PROGRAMME
@@ -40,7 +40,8 @@ def start_program():
 # MENU DE DEMARRAGE
 def menu():
 	print("Taper 1 pour créer un fichier listant l'ensemble des ordres effectués")
-	print("Taper 2 pour créer un fichier listant l'ensemble des dividendes")
+	print("Taper 2 pour créer un fichier listant l'ensemble des ordres effectués et classés par ordre chronologique")
+	print("Taper 3 pour créer un fichier listant l'ensemble des dividendes")
 	menu = input("Votre choix : ").strip()
 	print("-------------------------------------------------------------")
 	return menu
@@ -89,7 +90,7 @@ def _find_broker(_file):
 	FIELDNAMES_TRADING212_V_2 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','ID','Currency conversion fee','Currency (Currency conversion fee)']
 	FIELDNAMES_TRADING212_V_3 = ['Action','Time','ISIN','Ticker','Name','No. of shares','Price / share','Currency (Price / share)','Exchange rate','Result','Currency (Result)','Total','Currency (Total)','Notes','ID']
 
-	with open(PATH + "/" + _file) as file:
+	with open(_file) as file:
 
 		reader = csv.DictReader(file)
 
@@ -245,9 +246,9 @@ def list_all_stockMarket_order(_outcome):
 	# pour chaque fichier .csv trouvé dans le répertoire PATH
 	for f in [x for x in list_fileNames(PATH) if str(x).endswith('.csv')] :
 		
-		print(f"[INFO] Lecture du fichier '{PATH}/{f}'")
+		print(f"[INFO] Lecture du fichier '{f}'")
 		
-		with open(PATH + "/" + f) as file:
+		with open(f) as file:
 			reader = csv.DictReader(file)
 
 			# recherche du broker
@@ -371,9 +372,9 @@ def list_all_stockMarket_order_sorted(_outcome):
 	# pour chaque fichier .csv trouvé dans le répertoire PATH
 	for f in [x for x in list_fileNames(PATH) if str(x).endswith('.csv')] :
 		
-		print(f"[INFO] Lecture du fichier '{PATH}/{f}'")
+		print(f"[INFO] Lecture du fichier '{f}'")
 		
-		with open(PATH + "/" + f) as file:
+		with open(f) as file:
 			reader = csv.DictReader(file)
 
 			# recherche du broker
@@ -521,9 +522,9 @@ def list_all_stockMarket_dividend(_outcome):
 	# pour chaque fichier .csv trouvé dans le répertoire PATH
 	for f in [x for x in list_fileNames(PATH) if str(x).endswith('.csv')] :
 		
-		print(f"[INFO] Lecture du fichier '{PATH}/{f}'")
+		print(f"[INFO] Lecture du fichier '{f}'")
 		
-		with open(PATH + "/" + f) as file:
+		with open(f) as file:
 			reader = csv.DictReader(file)
 
 			# recherche du broker
@@ -590,7 +591,8 @@ def get_stockMarket_portfolio(_input, _output):
 			q2 = float(row["QUANTITY"])
 			p1 = float(assets[row["TICKER"]]["unit price"])
 			p2 = float(row["UNIT PRICE"])
-
+			
+			# TODO ajouter un arrondi pour eviter les e-x
 			if row["TYPE"] == "BUY":
 				asset_value = {
 				"quantity": q1 + q2,
@@ -603,6 +605,7 @@ def get_stockMarket_portfolio(_input, _output):
 				"unit price": (q1*p1 - q2*p2)/(q1 - q2) if q1 - q2 != 0 else 0,
 				"currency": row["CURRENCY"]
 				}
+				print( q1 - q2)
 			else:
 				continue
 
@@ -654,19 +657,27 @@ def main():
 	match menu():
 		case "1": # LISTER TOUTES LES OPERATIONS ACHAT / VENTE DE TITRE
 			print()
-			print(f"Le résultat sera disponible dans {PATH}/allstockmarket-orders.csv")
+			print(f"Le résultat sera disponible dans {PATH}/all stockmarket orders.csv")
 			print()
 			print("-------------------------------------------------------------")
 			print()
-			list_all_stockMarket_order(open(PATH + "/allstockmarket-orders.csv", "w"))
+			list_all_stockMarket_order(open(PATH + "/all stockmarket orders.csv", "w"))
 
-		case "2": # LISTER LES DIVIDENDES VERSES & LES IMPOTS DEJA PRELEVES
+		case "2": # LISTER ET CLASSER TOUTES LES OPERATIONS ACHAT / VENTE DE TITRE
 			print()
-			print(f"Le résultat sera disponible dans {PATH}/allstockmarket-dividend.csv")
+			print(f"Le résultat sera disponible dans {PATH}/all stockmarket orders (sorted).csv")
 			print()
 			print("-------------------------------------------------------------")
 			print()
-			list_all_stockMarket_dividend(open(PATH + "/allstockmarket-dividend.csv", "w"))
+			list_all_stockMarket_order_sorted(open(PATH + "/all stockmarket orders (sorted).csv", "w"))
+
+		case "3": # LISTER LES DIVIDENDES VERSES & LES IMPOTS DEJA PRELEVES
+			print()
+			print(f"Le résultat sera disponible dans {PATH}/all stockmarket dividend.csv")
+			print()
+			print("-------------------------------------------------------------")
+			print()
+			list_all_stockMarket_dividend(open(PATH + "/all stockmarket dividend.csv", "w"))
 
 		case "_yfinance":
 			msft = yfinance.Ticker("MSFT")
@@ -686,17 +697,9 @@ def main():
 		case "get_stockMarket_portfolio":
 			print()
 			assets = get_stockMarket_portfolio(
-												open(PATH + "/allstockmarket-orders.csv", "r"),
+												open(PATH + "/all stockmarket orders.csv", "r"),
 												open(PATH + "/portfolio.csv", "w"))
 		
-		case "list_all_stockMarket_order_sorted":
-			print()
-			print(f"Le résultat sera disponible dans {PATH}/allstockmarket-orders.csv")
-			print()
-			print("-------------------------------------------------------------")
-			print()
-			list_all_stockMarket_order_sorted(open(PATH + "/allstockmarket-orders-sorted.csv", "w"))
-
 		case _:
 			print("[ERROR] Choix non implémenté")
 
