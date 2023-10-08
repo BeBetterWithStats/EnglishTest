@@ -270,12 +270,12 @@ def list_all_stockMarket_order(_outcome):
 						date = datetime.strptime(row["Date"] + " " + row["Heure"], "%d-%m-%Y %H:%M")
 						type = "BUY" if float(row["Montant"]) < 0 else "SELL" 	# value = <value_if_true> if <expression> else <value_if_false>
 						isin = row["Code ISIN"]
-						ticker = "NA"
 						quantity = abs(float(row["Quantité"]))
 						price = row["Cours"]
 						amount = str(row["Montant devise locale"]).replace(",", "").replace("-","")
 						currency = row[""] #TODO smelly code due to DEGIRO  with several empty fieldnames
-							
+						ticker = "TBD" # @TODO trouver le ticker à partir du numéro ISIN
+						
 					case "TRADING 212":
 						# mapping du type d'opération
 						match str(row["Action"]).upper(): 
@@ -313,18 +313,11 @@ def list_all_stockMarket_order(_outcome):
 								type = row["Type"]
 								quantity = 0
 						
-						# convertir la date
-						# REVOLUT donne une date précise avec hh:mm:ss au format iso
 						date = datetime.fromisoformat(row["Date"])
-						
-						# prix unitaire
 						price = str(row["Price per share"])[1:].replace(",", "").replace("-","")
 						amount = str(row["Total Amount"])[1:].replace(",", "").replace("-","")
-
-						# trouver l'isin à partir du ticker
-						isin = "TBD" if len(row["Ticker"]) > 0 else "TBD" # value = <value_if_true> if <expression> else <value_if_false>
-						
 						ticker = row["Ticker"]
+						isin = "TBD" # @TODO trouver le code ISIN à partir du ticker
 						currency = row["Currency"]
 							
 					case _:
@@ -408,27 +401,23 @@ def list_all_stockMarket_order_sorted(_outcome):
 						# convertir la date
 						# REVOLUT donne une date précise avec hh:mm:ss au format iso
 						date = datetime.fromisoformat(row["Date"])
-						
-						# prix unitaire
 						price = str(row["Price per share"])[1:].replace(",", "").replace("-","")
 						amount = str(row["Total Amount"])[1:].replace(",", "").replace("-","")
-
-						# trouver l'isin à partir du ticker
-						isin = "TBD" if len(row["Ticker"]) > 0 else "TBD" # value = <value_if_true> if <expression> else <value_if_false>
-						
 						ticker = row["Ticker"]
 						currency = row["Currency"]
+						isin = "TBD" # @TODO trouver l'isin à partir du ticker
+						
 					
 					case "DEGIRO":
 						date = datetime.strptime(row["Date"] + " " + row["Heure"], "%d-%m-%Y %H:%M")
 						type = "BUY" if float(row["Montant"]) < 0 else "SELL" 	# value = <value_if_true> if <expression> else <value_if_false>
 						isin = row["Code ISIN"]
-						ticker = "NA"
 						quantity = abs(float(row["Quantité"]))
 						price = row["Cours"]
 						amount = str(row["Montant devise locale"]).replace(",", "").replace("-","")
 						currency = row[""] #TODO smelly code due to DEGIRO  with several empty fieldnames
-							
+						ticker = "TBD" # @TODO trouver le ticker à partir du numéro ISIN
+						
 					case "TRADING 212":
 						# mapping du type d'opération
 						match str(row["Action"]).upper(): 
@@ -593,11 +582,10 @@ def get_stockMarket_portfolio(_input, _output):
 			p1 = float(assets[row["TICKER"]]["unit price"])
 			p2 = float(row["UNIT PRICE"])
 			
-			# TODO ajouter un arrondi pour eviter les e-x
 			if row["TYPE"] == "BUY":
 				asset_value = {
 				"quantity": q1 + q2,
-				"unit price": (q1*p1 + q2*p2)/(q1 + q2)if q1 + q2 != 0 else 0,
+				"unit price": (q1*p1 + q2*p2)/(q1 + q2) if q1 + q2 != 0 else 0,
 				"currency": row["CURRENCY"]
 				}
 			elif row["TYPE"] == "SELL":
@@ -606,7 +594,6 @@ def get_stockMarket_portfolio(_input, _output):
 				"unit price": (q1*p1 - q2*p2)/(q1 - q2) if q1 - q2 != 0 else 0,
 				"currency": row["CURRENCY"]
 				}
-				print( q1 - q2)
 			else:
 				continue
 
@@ -632,6 +619,7 @@ def get_stockMarket_portfolio(_input, _output):
 	writer.writeheader()
 
 	for asset in assets:
+
 		row = {
 			"BROKER": "",
 			"TICKER": asset,
@@ -640,7 +628,11 @@ def get_stockMarket_portfolio(_input, _output):
 			"UNIT PRICE": assets[asset]["unit price"],
 			"CURRENCY": assets[asset]["currency"]
 		}
-		writer.writerow(row)
+		
+		if float(row["QUANTITY"]) > float('1e-003') : # permet de filtrer les lignes donc la quantité est inférieure à 0.001
+													  # ce qui peut arriver à cause des arrondis
+			writer.writerow(row)
+
 	return assets
 
 # FIN - FONCTIONS EXPOSABLES
@@ -673,6 +665,10 @@ def main():
 			list_all_stockMarket_order_sorted(open(PATH + "/all stockmarket orders (sorted).csv", "w"))
 
 		case "3":
+			print()
+			print(f"Le résultat sera disponible dans {PATH}/portfolio.csv")
+			print()
+			print("-------------------------------------------------------------")
 			print()
 			list_all_stockMarket_order_sorted(open(PATH + "/all stockmarket orders (sorted).csv", "w"))
 			assets = get_stockMarket_portfolio(
