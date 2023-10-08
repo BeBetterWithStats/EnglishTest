@@ -41,7 +41,8 @@ def start_program():
 def menu():
 	print("Taper 1 pour créer un fichier listant l'ensemble des ordres effectués")
 	print("Taper 2 pour créer un fichier listant l'ensemble des ordres effectués et classés par ordre chronologique")
-	print("Taper 3 pour créer un fichier listant l'ensemble des dividendes")
+	print("Taper 3 pour donner la répartition de son portefeuille par broker")
+	print("Taper 4 pour créer un fichier listant l'ensemble des dividendes")
 	menu = input("Votre choix : ").strip()
 	print("-------------------------------------------------------------")
 	return menu
@@ -671,7 +672,14 @@ def main():
 			print()
 			list_all_stockMarket_order_sorted(open(PATH + "/all stockmarket orders (sorted).csv", "w"))
 
-		case "3": # LISTER LES DIVIDENDES VERSES & LES IMPOTS DEJA PRELEVES
+		case "3":
+			print()
+			list_all_stockMarket_order_sorted(open(PATH + "/all stockmarket orders (sorted).csv", "w"))
+			assets = get_stockMarket_portfolio(
+												open(PATH + "/all stockmarket orders (sorted).csv", "r"),
+												open(PATH + "/portfolio.csv", "w"))
+		
+		case "4": # LISTER LES DIVIDENDES VERSES & LES IMPOTS DEJA PRELEVES
 			print()
 			print(f"Le résultat sera disponible dans {PATH}/all stockmarket dividend.csv")
 			print()
@@ -694,12 +702,6 @@ def main():
 			for f in [x for x in list_fileNames(PATH) if str(x).endswith('.csv')] :
 				print(_find_broker(f))
 
-		case "get_stockMarket_portfolio":
-			print()
-			assets = get_stockMarket_portfolio(
-												open(PATH + "/all stockmarket orders.csv", "r"),
-												open(PATH + "/portfolio.csv", "w"))
-		
 		case _:
 			print("[ERROR] Choix non implémenté")
 
