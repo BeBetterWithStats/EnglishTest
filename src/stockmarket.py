@@ -5,6 +5,8 @@
 import csv
 import os
 import yfinance
+import requests
+import json
 from datetime import datetime
 from forex_python.converter import CurrencyRates
 
@@ -13,6 +15,8 @@ from forex_python.converter import CurrencyRates
 
 PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/data/stocks"
 TYPES = ["BUY", "SELL", "DIVIDEND", "TAX"]
+DEFAULT_VALUE = "TBD"
+MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 
 ##########################################################################
 # FONCTIONS UTILITAIRES A RECOPIER
@@ -274,7 +278,7 @@ def list_all_stockMarket_order(_outcome):
 						price = row["Cours"]
 						amount = str(row["Montant devise locale"]).replace(",", "").replace("-","")
 						currency = row[""] #TODO smelly code due to DEGIRO  with several empty fieldnames
-						ticker = "TBD" # @TODO trouver le ticker à partir du numéro ISIN
+						ticker = DEFAULT_VALUE # @TODO trouver le ticker à partir du numéro ISIN
 						
 					case "TRADING 212":
 						# mapping du type d'opération
@@ -317,7 +321,7 @@ def list_all_stockMarket_order(_outcome):
 						price = str(row["Price per share"])[1:].replace(",", "").replace("-","")
 						amount = str(row["Total Amount"])[1:].replace(",", "").replace("-","")
 						ticker = row["Ticker"]
-						isin = "TBD" # @TODO trouver le code ISIN à partir du ticker
+						isin = DEFAULT_VALUE # @TODO trouver le code ISIN à partir du ticker
 						currency = row["Currency"]
 							
 					case _:
@@ -405,7 +409,7 @@ def list_all_stockMarket_order_sorted(_outcome):
 						amount = str(row["Total Amount"])[1:].replace(",", "").replace("-","")
 						ticker = row["Ticker"]
 						currency = row["Currency"]
-						isin = "TBD" # @TODO trouver l'isin à partir du ticker
+						isin = DEFAULT_VALUE # @TODO trouver l'isin à partir du ticker
 						
 					
 					case "DEGIRO":
@@ -416,7 +420,7 @@ def list_all_stockMarket_order_sorted(_outcome):
 						price = row["Cours"]
 						amount = str(row["Montant devise locale"]).replace(",", "").replace("-","")
 						currency = row[""] #TODO smelly code due to DEGIRO  with several empty fieldnames
-						ticker = "TBD" # @TODO trouver le ticker à partir du numéro ISIN
+						ticker = DEFAULT_VALUE # @TODO trouver le ticker à partir du numéro ISIN
 						
 					case "TRADING 212":
 						# mapping du type d'opération
@@ -664,7 +668,7 @@ def main():
 			print()
 			list_all_stockMarket_order_sorted(open(PATH + "/all stockmarket orders (sorted).csv", "w"))
 
-		case "3":
+		case "3": # DONNER LA COMPOSITION D'UN PORTEFEUILLE
 			print()
 			print(f"Le résultat sera disponible dans {PATH}/portfolio.csv")
 			print()
@@ -684,11 +688,19 @@ def main():
 			list_all_stockMarket_dividend(open(PATH + "/all stockmarket dividend.csv", "w"))
 
 		case "_yfinance":
-			msft = yfinance.Ticker("MSFT")
+			msft = yfinance.Ticker("CNDX")
 			print("isin = " + msft.get_isin())
 			print(msft.get_dividends())
 			print(msft.get_info())
 
+		case "_ms":
+			url = "http://api.marketstack.com/v1/tickers/MSFT" + "?access_key=" + MS_API_ACCESS_KEY
+			api_response = requests.get(url)
+			print(api_response.status_code)
+			api_json = api_response.json() if api_response != None else None # api_json = api_response.json() if api_response and api_response.status_code == 200 else None
+			print()
+			print(api_json)
+			
 		case "_find_broker":
 			print()
 			print(f"Parcourir le répertoire {PATH}")
