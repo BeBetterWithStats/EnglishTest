@@ -73,6 +73,7 @@ def print_executionTime(_start, _finish):
 # FONCTIONS PRIVEES
 ##########################################################################
 
+# @return _amount converti de la monnaie _from vers la monnaire _to au taux de conversion valable à la date _date
 def _convert_currencies(_from, _to, _amount, _date):
 	
 	currency_API = CurrencyRates()
@@ -83,6 +84,47 @@ def _convert_currencies(_from, _to, _amount, _date):
 		print(f"[DEBUG] fx = '{currency_API.get_rate(_from, _to, _date)}'")
 		return None
 
+# @return le code isin à partir du ticker
+def _find_isin(_ticker, _currency):
+
+	FIELDNAMES = [
+		'symbol', 
+		'isin', 
+		'currency', 
+		'name', 
+		'region', 
+		'region_code'
+		]
+	
+	with open(PATH + "/database isin ticker.csv") as file:
+
+		reader = csv.DictReader(file, fieldnames=FIELDNAMES, delimiter=";")
+		for row in reader:
+			if (row["symbol"] == _ticker and row["currency"] == _currency):
+				return row["isin"]
+			
+	return None
+
+# @return le code isin à partir du ticker
+def _find_ticker(_isin, _currency):
+
+	FIELDNAMES = [
+		'symbol', 
+		'isin', 
+		'currency', 
+		'name', 
+		'region', 
+		'region_code'
+		]
+	
+	with open(PATH + "/database isin ticker.csv") as file:
+
+		reader = csv.DictReader(file, fieldnames=FIELDNAMES, delimiter=";")
+		for row in reader:
+			if (row["isin"] == _isin and row["currency"] == _currency):
+				return row["symbol"]
+			
+	return None
 
 # @return le nom du broker et la liste des types possibles gérés par le fichier
 def _find_broker(_file):
@@ -278,7 +320,7 @@ def list_all_stockMarket_order(_outcome):
 						price = row["Cours"]
 						amount = str(row["Montant devise locale"]).replace(",", "").replace("-","")
 						currency = row[""] #TODO smelly code due to DEGIRO  with several empty fieldnames
-						ticker = DEFAULT_VALUE # @TODO trouver le ticker à partir du numéro ISIN
+						ticker = _find_ticker(isin, currency)
 						
 					case "TRADING 212":
 						# mapping du type d'opération
@@ -321,8 +363,8 @@ def list_all_stockMarket_order(_outcome):
 						price = str(row["Price per share"])[1:].replace(",", "").replace("-","")
 						amount = str(row["Total Amount"])[1:].replace(",", "").replace("-","")
 						ticker = row["Ticker"]
-						isin = DEFAULT_VALUE # @TODO trouver le code ISIN à partir du ticker
 						currency = row["Currency"]
+						isin = _find_isin(ticker, currency)
 							
 					case _:
 						print(f"[ERROR] Broker '{brocker}' non géré")
@@ -409,7 +451,7 @@ def list_all_stockMarket_order_sorted(_outcome):
 						amount = str(row["Total Amount"])[1:].replace(",", "").replace("-","")
 						ticker = row["Ticker"]
 						currency = row["Currency"]
-						isin = DEFAULT_VALUE # @TODO trouver l'isin à partir du ticker
+						isin = _find_isin(ticker, currency)
 						
 					
 					case "DEGIRO":
@@ -420,7 +462,7 @@ def list_all_stockMarket_order_sorted(_outcome):
 						price = row["Cours"]
 						amount = str(row["Montant devise locale"]).replace(",", "").replace("-","")
 						currency = row[""] #TODO smelly code due to DEGIRO  with several empty fieldnames
-						ticker = DEFAULT_VALUE # @TODO trouver le ticker à partir du numéro ISIN
+						ticker = _find_ticker(isin, currency)
 						
 					case "TRADING 212":
 						# mapping du type d'opération
