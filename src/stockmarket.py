@@ -34,40 +34,35 @@ def list_fileNames(_folder):
 
 # MESSAGE DE DEMARRAGE DU PROGRAMME
 def start_program():
-    print("#############################################################")
-    print("#                                                           #")
-    print("#                      STOCKS LIST                          #")
-    print("#                                                           #")
-    print("#                  $ python3 stocks.py                      #")
-    print("#############################################################")
+    print()
+    print("\U0001F680 stocks.py")
     print()
     return datetime.now()
 
 
 # MENU DE DEMARRAGE
 def menu():
-    print("Taper 1 pour créer un fichier listant l'ensemble des ordres effectués")
+    print("1️⃣   pour créer un fichier listant l'ensemble des ordres effectués")
     print(
-        "Taper 2 pour créer un fichier listant l'ensemble des ordres effectués et classés par ordre chronologique"
+        "2️⃣   pour créer un fichier listant l'ensemble des ordres effectués et classés par ordre chronologique"
     )
-    print("Taper 3 pour donner la répartition de son portefeuille")
-    print("Taper 4 pour créer un fichier listant l'ensemble des dividendes")
-    menu = input("Votre choix : ").strip()
-    print("-------------------------------------------------------------")
+    print("3️⃣   pour donner la répartition de son portefeuille")
+    print("4️⃣   pour créer un fichier listant l'ensemble des dividendes")
+    print()
+    menu = input("\U000021E2 Votre choix : ").strip()
     return menu
 
 
 # MESSAGE DE FIN DU PROGRAMME
 def end_program():
     print()
-    print("#############################################################")
+    print()
     return datetime.now()
 
 
 # TEMPS D'EXECUTION DU PROGRAMME
 def print_executionTime(_start, _finish):
-    print()
-    print(f"[INFO] execution = {_finish - _start}")
+    print(f"\U000023F0 {_finish - _start}")
     print()
 
 
@@ -885,8 +880,7 @@ def get_stockMarket_portfolio(_input, _output):
 ############ MAIN #############
 def main():
     start = start_program()
-    print()
-    print(f"Mettre les fichiers de vos différents brokers dans {PATH}")
+    print(f"\U0001F4C1 {PATH}")
     print()
 
     match menu():
@@ -966,7 +960,8 @@ def main():
                 print(_find_broker(f))
 
         case _:
-            print("[ERROR] Choix non implémenté")
+            print()
+            print("\U0000274C ce choix n'existe pas")
 
     finish = end_program()
     print_executionTime(start, finish)
