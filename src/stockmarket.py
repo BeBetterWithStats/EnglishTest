@@ -22,10 +22,23 @@ MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 # FONCTIONS UTILITAIRES A RECOPIER
 ##########################################################################
 
-# 💣  💥  🔥  🔎  📛  ⛔  🚧  🚨  🚫  💬  🌧  🌥  🌩  ⏰  ❌  ✅  ❗  📁  📄  📝
+#  💣  💥  🔥  📛  ⛔  ❌  🚫  ❗  ✅
+#  🚧  🚨  💬
+#  🌩  🌧  🌥
+#  ⏰   
+#  📁  📄  📝  🔎
 
-# RETOURNER LES NOMS DES FICHIERS D'UN REPERTOIRE PASSE EN PARAMETRE
-def list_fileNames(_folder):
+def list_fileNames(_folder) -> list:
+    """ 
+    Retourne une liste de nom de fichier présent dans le répertoire passé en paramètre\n
+    Returns list of filenames included in the ``_folder`` directory
+    Args:
+        _folder (str) : directory or folder
+
+    Returns:
+        list of filenames (list of str)
+    """
+
     files = []
     for _path, _dirs, _files in os.walk(_folder):
         for f in _files:
@@ -33,8 +46,15 @@ def list_fileNames(_folder):
     return files
 
 
-# MESSAGE DE DEMARRAGE DU PROGRAMME
-def start_program():
+def start_program() -> datetime:
+    """ 
+    Message de démarrage du programme, renvoie l'heure exacte de démarrage du programme\n
+    Returns the exact time of the program begining
+    
+    Returns:
+        datime.now()
+    """
+
     print()
     print("🚀 stocks.py")
     print()
@@ -42,7 +62,15 @@ def start_program():
 
 
 # MENU DE DEMARRAGE
-def menu():
+def menu() -> str:
+    """ 
+    Affiche un menu de sélection\n
+    Display an selection menu
+    
+    Returns:
+        the user's prompt
+    """
+
     print("1️⃣   pour créer un fichier listant l'ensemble des ordres effectués")
     print(
         "2️⃣   pour créer un fichier listant l'ensemble des ordres effectués et classés par ordre chronologique"
@@ -55,16 +83,37 @@ def menu():
 
 
 # MESSAGE DE FIN DU PROGRAMME
-def end_program():
+def end_program() -> datetime:
+    """ 
+    Message de fin du programme, renvoie l'heure exacte de fin du programme\n
+    Returns the exact time of the program ended
+    
+    Returns:
+        datime.now()
+    """
+
     print()
     print()
     return datetime.now()
 
 
 # TEMPS D'EXECUTION DU PROGRAMME
-def print_executionTime(_start, _finish):
+def print_executionTime(_start, _finish) -> datetime:
+    """ 
+    Mesure le temps écoulé entre deux dates et l'affiche en console\n
+    Returns the delay between 2 datetime
+
+    Args:
+        _start (datetime) : 1st date of the interval
+        _finish (datetime) : 2nd date of the interval
+
+    Returns:
+        difference between ``_finish`` and ``_start``
+    """
+
     print(f"\U000023F0 {_finish - _start}")
     print()
+    return _finish - _start
 
 
 # FIN - FONCTIONS UTILITAIRES A RECOPIER
