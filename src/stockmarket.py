@@ -22,6 +22,7 @@ MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 # FONCTIONS UTILITAIRES A RECOPIER
 ##########################################################################
 
+# 💣  💥  🔥  🔎  📛  ⛔  🚧  🚨  🚫  💬  🌧  🌥  🌩  ⏰  ❌  ✅  ❗  📁  📄  📝
 
 # RETOURNER LES NOMS DES FICHIERS D'UN REPERTOIRE PASSE EN PARAMETRE
 def list_fileNames(_folder):
@@ -267,7 +268,7 @@ def _add_order(
     # les seules valeurs autorisées sont celles de la variable globale TYPES
     if len([x for x in TYPES if str(x) == _type]) == 0:
         print(
-            f"[ERROR] ligne échappée {_row} RAISON = _type (valeur = '{_type}') n'est pas géré "
+            f"🚧 ligne échappée {_row} RAISON = _type (valeur = '{_type}') n'est pas géré "
         )
         return False  # sort de la méthode
 
@@ -276,13 +277,13 @@ def _add_order(
         float(_quantity)
     except ValueError:
         print(
-            f"[ERROR] ligne échappée {_row} RAISON = _quantity (valeur = '{_quantity}') n'est pas convertible en float,"
+            f"⛔ ligne échappée {_row} RAISON = _quantity (valeur = '{_quantity}') n'est pas convertible en float,"
         )
         return False  # sort de la méthode
 
     if float(_quantity) < 0:
         print(
-            f"[ERROR] ligne échappée {_row} RAISON = _quantity (valeur = '{_quantity}') devrait être positif ou égal à 0,"
+            f"⛔ ligne échappée {_row} RAISON = _quantity (valeur = '{_quantity}') devrait être positif ou égal à 0,"
         )
         return False  # sort de la méthode
 
@@ -294,13 +295,13 @@ def _add_order(
         float(_unitPrice)
     except ValueError:
         print(
-            f"[ERROR] ligne échappée {_row} RAISON = _unitPrice (valeur = '{_unitPrice}') n'est pas convertible en float,"
+            f"⛔ ligne échappée {_row} RAISON = _unitPrice (valeur = '{_unitPrice}') n'est pas convertible en float,"
         )
         return False  # sort de la méthode
 
     if float(_unitPrice) < 0:
         print(
-            f"[ERROR] ligne échappée {_row} RAISON = _unitPrice (valeur = '{_unitPrice}') devrait être positif ou égal à 0,"
+            f"⛔ ligne échappée {_row} RAISON = _unitPrice (valeur = '{_unitPrice}') devrait être positif ou égal à 0,"
         )
         return False  # sort de la méthode
 
@@ -309,13 +310,13 @@ def _add_order(
         float(_amount)
     except ValueError:
         print(
-            f"[ERROR] ligne échappée {_row} RAISON = _amount (valeur = '{_amount}') n'est pas convertible en float,"
+            f"⛔ ligne échappée {_row} RAISON = _amount (valeur = '{_amount}') n'est pas convertible en float,"
         )
         return False  # sort de la méthode
 
     if float(_amount) < 0:
         print(
-            f"[ERROR] ligne échappée {_row} RAISON = _amount (valeur = '{_amount}') devrait être positif ou égal à 0,"
+            f"⛔ ligne échappée {_row} RAISON = _amount (valeur = '{_amount}') devrait être positif ou égal à 0,"
         )
         return False  # sort de la méthode
 
@@ -354,7 +355,7 @@ def _add_dividend(
     # les seules valeurs autorisées sont celles de la variable globale TYPES
     if len([x for x in TYPES if str(x) == _type]) == 0:
         print(
-            f"[ERROR] le paramètre _type n'est pas géré par l'application (valeur = '{_type}' pour {_broker})"
+            f"🚧 le paramètre _type n'est pas géré par l'application (valeur = '{_type}' pour {_broker})"
         )
         return False  # sort de la méthode
 
@@ -405,7 +406,7 @@ def list_all_stockMarket_order(_outcome):
 
     # pour chaque fichier .csv trouvé dans le répertoire PATH
     for f in [x for x in list_fileNames(PATH) if str(x).endswith(".csv")]:
-        print(f"[INFO] Lecture du fichier '{f}'")
+        print(f"📄 Lecture du fichier '{f}'")
 
         with open(f) as file:
             reader = csv.DictReader(file)
@@ -511,9 +512,9 @@ def list_all_stockMarket_order(_outcome):
                         isin = _find_isin(ticker, currency)
 
                     case _:
-                        print(f"[ERROR] Broker '{brocker}' non géré")
-                        print(f"[ERROR] Revoir le nom du fichier")
-                        print(f"[ERROR] ou ajouter le broker au programme stocks.py")
+                        print(f"🚧 Broker '{brocker}' non géré")
+                        print(f"  Revoir le nom du fichier")
+                        print(f"  ou ajouter le broker au programme stocks.py")
                         break
 
                 # ajoute à _outcome les données présentes dans chaque fichier du broker
@@ -554,7 +555,7 @@ def list_all_stockMarket_order_sorted(_outcome):
 
     # pour chaque fichier .csv trouvé dans le répertoire PATH
     for f in [x for x in list_fileNames(PATH) if str(x).endswith(".csv")]:
-        print(f"[INFO] Lecture du fichier '{f}'")
+        print(f"📄 Lecture du fichier '{f}'")
 
         with open(f) as file:
             reader = csv.DictReader(file)
@@ -664,9 +665,9 @@ def list_all_stockMarket_order_sorted(_outcome):
                         currency = row["Currency (Price / share)"]
 
                     case _:
-                        print(f"[ERROR] Broker '{brocker}' non géré")
-                        print(f"[ERROR] Revoir le nom du fichier")
-                        print(f"[ERROR] ou ajouter le broker au programme stocks.py")
+                        print(f"🚧 Broker '{brocker}' non géré")
+                        print(f"  Revoir le nom du fichier")
+                        print(f"  ou ajouter le broker au programme stocks.py")
                         break
 
                 # assets.append(
@@ -753,7 +754,7 @@ def list_all_stockMarket_dividend(_outcome):
 
     # pour chaque fichier .csv trouvé dans le répertoire PATH
     for f in [x for x in list_fileNames(PATH) if str(x).endswith(".csv")]:
-        print(f"[INFO] Lecture du fichier '{f}'")
+        print(f"📄 Lecture du fichier '{f}'")
 
         with open(f) as file:
             reader = csv.DictReader(file)
@@ -792,9 +793,9 @@ def list_all_stockMarket_dividend(_outcome):
                             row["Mouvements"],
                         )
                 case _:
-                    print(f"[ERROR] Broker '{brocker_to_uppercase}' non géré")
-                    print(f"[ERROR] Revoir le nom du fichier")
-                    print(f"[ERROR] ou ajouter le broker au programme stocks.py")
+                    print(f"🚧 Broker '{brocker_to_uppercase}' non géré")
+                    print(f"  Revoir le nom du fichier")
+                    print(f"  ou ajouter le broker au programme stocks.py")
 
     return True
 
@@ -886,7 +887,7 @@ def main():
     match menu():
         case "1":  # LISTER TOUTES LES OPERATIONS ACHAT / VENTE DE TITRE
             print()
-            print(f"Le résultat sera disponible dans {PATH}/all stockmarket orders.csv")
+            print(f"🔜 Le résultat sera disponible dans {PATH}/all stockmarket orders.csv")
             print()
             print("-------------------------------------------------------------")
             print()
@@ -895,7 +896,7 @@ def main():
         case "2":  # LISTER ET CLASSER TOUTES LES OPERATIONS ACHAT / VENTE DE TITRE
             print()
             print(
-                f"Le résultat sera disponible dans {PATH}/all stockmarket orders (sorted).csv"
+                f"🔜 Le résultat sera disponible dans {PATH}/all stockmarket orders (sorted).csv"
             )
             print()
             print("-------------------------------------------------------------")
@@ -906,7 +907,7 @@ def main():
 
         case "3":  # DONNER LA COMPOSITION D'UN PORTEFEUILLE
             print()
-            print(f"Le résultat sera disponible dans {PATH}/portfolio.csv")
+            print(f"🔜 Le résultat sera disponible dans {PATH}/portfolio.csv")
             print()
             print("-------------------------------------------------------------")
             print()
@@ -921,7 +922,7 @@ def main():
         case "4":  # LISTER LES DIVIDENDES VERSES & LES IMPOTS DEJA PRELEVES
             print()
             print(
-                f"Le résultat sera disponible dans {PATH}/all stockmarket dividend.csv"
+                f"🔜 Le résultat sera disponible dans {PATH}/all stockmarket dividend.csv"
             )
             print()
             print("-------------------------------------------------------------")
@@ -930,6 +931,17 @@ def main():
                 open(PATH + "/all stockmarket dividend.csv", "w")
             )
 
+        case "_find_broker":
+            print()
+            print(f"📁 {PATH}")
+            print()
+            print("-------------------------------------------------------------")
+            # pour chaque fichier .csv trouvé dans le répertoire PATH
+            for f in [x for x in list_fileNames(PATH) if str(x).endswith(".csv")]:
+                print(_find_broker(f))
+
+		# sandbox
+		# scenario à venir
         case "_yfinance":
             msft = yfinance.Ticker("CNDX")
             print("isin = " + msft.get_isin())
@@ -949,19 +961,10 @@ def main():
             )  # api_json = api_response.json() if api_response and api_response.status_code == 200 else None
             print()
             print(api_json)
-
-        case "_find_broker":
-            print()
-            print(f"Parcourir le répertoire {PATH}")
-            print()
-            print("-------------------------------------------------------------")
-            # pour chaque fichier .csv trouvé dans le répertoire PATH
-            for f in [x for x in list_fileNames(PATH) if str(x).endswith(".csv")]:
-                print(_find_broker(f))
-
+			
         case _:
-            print()
-            print("\U0000274C ce choix n'existe pas")
+            # print()
+            print("❌ ce choix n'existe pas")
 
     finish = end_program()
     print_executionTime(start, finish)
