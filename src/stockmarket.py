@@ -25,13 +25,14 @@ MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 #  💣  💥  🔥  📛  ⛔  ❌  🚫  ❗  ✅
 #  🚧  🚨  💬
 #  🌩  🌧  🌥
-#  ⏰   
+#  ⏰  
 #  📁  📄  📝  🔎
+#  🔜  ⇢
 
 def list_fileNames(_folder) -> list:
     """ 
     Retourne une liste de nom de fichier présent dans le répertoire passé en paramètre\n
-    Returns list of filenames included in the ``_folder`` directory
+
     Args:
         _folder (str) : directory or folder
 
@@ -49,7 +50,6 @@ def list_fileNames(_folder) -> list:
 def start_program() -> datetime:
     """ 
     Message de démarrage du programme, renvoie l'heure exacte de démarrage du programme\n
-    Returns the exact time of the program begining
     
     Returns:
         datime.now()
@@ -65,7 +65,6 @@ def start_program() -> datetime:
 def menu() -> str:
     """ 
     Affiche un menu de sélection\n
-    Display an selection menu
     
     Returns:
         the user's prompt
@@ -78,7 +77,7 @@ def menu() -> str:
     print("3️⃣   pour donner la répartition de son portefeuille")
     print("4️⃣   pour créer un fichier listant l'ensemble des dividendes")
     print()
-    menu = input("\U000021E2 Votre choix : ").strip()
+    menu = input("⇢ Votre choix : ").strip()
     return menu
 
 
@@ -86,7 +85,6 @@ def menu() -> str:
 def end_program() -> datetime:
     """ 
     Message de fin du programme, renvoie l'heure exacte de fin du programme\n
-    Returns the exact time of the program ended
     
     Returns:
         datime.now()
@@ -101,7 +99,6 @@ def end_program() -> datetime:
 def print_executionTime(_start, _finish) -> datetime:
     """ 
     Mesure le temps écoulé entre deux dates et l'affiche en console\n
-    Returns the delay between 2 datetime
 
     Args:
         _start (datetime) : 1st date of the interval
@@ -111,7 +108,7 @@ def print_executionTime(_start, _finish) -> datetime:
         difference between ``_finish`` and ``_start``
     """
 
-    print(f"\U000023F0 {_finish - _start}")
+    print(f"⏰ {_finish - _start}")
     print()
     return _finish - _start
 
@@ -125,20 +122,32 @@ def print_executionTime(_start, _finish) -> datetime:
 ##########################################################################
 
 
-# @return _amount converti de la monnaie _from vers la monnaire _to au taux de conversion valable à la date _date
-def _convert_currencies(_from, _to, _amount, _date):
+def _convert_currencies(_from, _to, _amount, _date) -> float:
+    """ 
+    Converti une somme exprimée en monnaie ``_from`` vers la monnaire ``_to`` au taux de conversion valable à la date ``_date``\n
+    
+    Args:
+        _from (str) : initial currency
+        _to (str) : final currency
+        _date (datetime) : a date of the conversion
+        _amount (str, int or float) : amount to convert
+
+    Returns:
+        amount (float) or None if currency does not exist
+    """
+
     currency_API = CurrencyRates()
     try:
         return (
             round(currency_API.get_rate(_from, _to, _date) * float(_amount), 2)
             if _from != _to
-            else _amount
+            else float(_amount)
         )
     except ValueError:
+        print("💥 in _convert_currencies() method")
         print(
-            f"[DEBUG] _from = '{_from}' & _to = '{_to}' & _date = '{_date}' & _amount = {_amount}"
+            f"  _from = '{_from}' & _to = '{_to}' & _date = '{_date}' & _amount = {_amount}"
         )
-        print(f"[DEBUG] fx = '{currency_API.get_rate(_from, _to, _date)}'")
         return None
 
 
@@ -170,8 +179,17 @@ def _find_ticker(_isin, _currency):
     return _isin
 
 
-# @return le nom du broker et la liste des types possibles gérés par le fichier
-def _find_broker(_file):
+def _find_broker(_file) -> tuple:
+    """ 
+    Détermine le broker utilisé pour générer le fichier des ordres de bourse\n
+    
+    Args:
+        _file (str) : file name
+
+    Returns:
+        a tuple with the broker name and the list of possible operations
+    """
+
     # LISTER ICI TOUTES LES ENTETES POSSIBLES DE FICHIER CSV
     FIELDNAMES_DEGIRO_V_1 = [
         "Date",
