@@ -889,7 +889,6 @@ def main():
             print()
             print(f"🔜 Le résultat sera disponible dans {PATH}/all stockmarket orders.csv")
             print()
-            print("-------------------------------------------------------------")
             print()
             list_all_stockMarket_order(open(PATH + "/all stockmarket orders.csv", "w"))
 
@@ -899,7 +898,6 @@ def main():
                 f"🔜 Le résultat sera disponible dans {PATH}/all stockmarket orders (sorted).csv"
             )
             print()
-            print("-------------------------------------------------------------")
             print()
             list_all_stockMarket_order_sorted(
                 open(PATH + "/all stockmarket orders (sorted).csv", "w")
@@ -909,7 +907,6 @@ def main():
             print()
             print(f"🔜 Le résultat sera disponible dans {PATH}/portfolio.csv")
             print()
-            print("-------------------------------------------------------------")
             print()
             list_all_stockMarket_order_sorted(
                 open(PATH + "/all stockmarket orders (sorted).csv", "w")
@@ -925,7 +922,6 @@ def main():
                 f"🔜 Le résultat sera disponible dans {PATH}/all stockmarket dividend.csv"
             )
             print()
-            print("-------------------------------------------------------------")
             print()
             list_all_stockMarket_dividend(
                 open(PATH + "/all stockmarket dividend.csv", "w")
@@ -935,7 +931,6 @@ def main():
             print()
             print(f"📁 {PATH}")
             print()
-            print("-------------------------------------------------------------")
             # pour chaque fichier .csv trouvé dans le répertoire PATH
             for f in [x for x in list_fileNames(PATH) if str(x).endswith(".csv")]:
                 print(_find_broker(f))
