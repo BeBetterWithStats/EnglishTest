@@ -116,7 +116,7 @@ def _find_ticker(_isin, _currency):
             if row["isin"] == _isin and row["currency"] == _currency:
                 return row["symbol"]
 
-    return None
+    return _isin
 
 
 # @return le nom du broker et la liste des types possibles gérés par le fichier
