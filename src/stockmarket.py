@@ -35,7 +35,7 @@ def list_fileNames(_folder):
 # MESSAGE DE DEMARRAGE DU PROGRAMME
 def start_program():
     print()
-    print("\U0001F680 stocks.py")
+    print("🚀 stocks.py")
     print()
     return datetime.now()
 
