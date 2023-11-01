@@ -94,6 +94,7 @@ def _convert_currencies(_from, _to, _amount, _date):
 
 
 # @return le code isin à partir du ticker
+# TODO revoir le contenu du fichier .csv
 def _find_isin(_ticker, _currency):
     FIELDNAMES = ["symbol", "isin", "currency", "name", "region", "region_code"]
 
@@ -107,6 +108,7 @@ def _find_isin(_ticker, _currency):
 
 
 # @return le code isin à partir du ticker
+# TODO revoir le contenu du fichier .csv
 def _find_ticker(_isin, _currency):
     FIELDNAMES = ["symbol", "isin", "currency", "name", "region", "region_code"]
 
