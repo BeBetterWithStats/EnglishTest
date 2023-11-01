@@ -822,6 +822,8 @@ def get_stockMarket_portfolio(_input, _output):
                     if q1 + q2 != 0
                     else 0,
                     "currency": row["CURRENCY"],
+                    "isin": row["ISIN"],
+                    "broker": row["BROKER"]
                 }
             elif row["TYPE"] == "SELL":
                 asset_value = {
@@ -830,6 +832,8 @@ def get_stockMarket_portfolio(_input, _output):
                     if q1 - q2 != 0
                     else 0,
                     "currency": row["CURRENCY"],
+                    "isin": row["ISIN"],
+                    "broker": row["BROKER"]
                 }
             else:
                 continue
@@ -840,12 +844,16 @@ def get_stockMarket_portfolio(_input, _output):
                     "quantity": row["QUANTITY"],
                     "unit price": row["UNIT PRICE"],
                     "currency": row["CURRENCY"],
+                    "isin": row["ISIN"],
+                    "broker": row["BROKER"]
                 }
             elif row["TYPE"] == "SELL":
                 asset_value = {
                     "quantity": "-" + row["QUANTITY"],
                     "unit price": "-" + row["UNIT PRICE"],
                     "currency": row["CURRENCY"],
+                    "isin": row["ISIN"],
+                    "broker": row["BROKER"]
                 }
             else:
                 continue
@@ -855,11 +863,11 @@ def get_stockMarket_portfolio(_input, _output):
     writer = csv.DictWriter(_output, fieldnames=FIELDNAMES)
     writer.writeheader()
 
-    for asset in assets:
+    for asset in sorted(assets) :
         row = {
-            "BROKER": "",
+            "BROKER": assets[asset]["broker"],
             "TICKER": asset,
-            "ISIN": "",
+            "ISIN": assets[asset]["isin"],
             "QUANTITY": assets[asset]["quantity"],
             "UNIT PRICE": assets[asset]["unit price"],
             "CURRENCY": assets[asset]["currency"],
