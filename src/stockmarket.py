@@ -318,7 +318,7 @@ def _find_broker(_file) -> tuple:
 
     return "", None
 
-
+# @TODO retirer la référence à _file et _fieldnames puisque ces deniers sont fixés par le programme lui même
 def _add_order(
     _file,
     _fieldnames,
@@ -326,13 +326,36 @@ def _add_order(
     _broker: str,
     _type: str,
     _tickerCode: str,
-    _isinCode: str,  # DATE, BROKER, "BUY" OR "SELL", TICKER, ISIN,
+    _isinCode: str,
     _quantity: float,
     _unitPrice: float,
     _amount: float,
-    _currency: str,  # QUANTITY, UNIT PRICE, AMOUNT, CURRENCY
+    _currency: str,
     _row: str,
 ):
+    """ 
+    Ajoute dans le fichier .CSV ``_file`` un ordre de bourse caractérisé par sa date d'exécution, son montant,
+    sa référence isin, sa référence de ticker, le sens d'opération (vente ou achat),
+    la quantité échangée, le prix unitaire et la monnaie de l'instrument financier\n
+    
+    Args:
+        _file (str) : csv file name
+        _fieldnames (list) : à retirer
+        _date (datetime) : execution date
+        _broker (str) : broker's name
+        _type (str) : one value in ["BUY", "SELL"]
+        _tickerCode (str) : ticker code
+        _isinCode (str) : isin code
+        _quantity (float) : quantity
+        _unitPrice (float) : unit price
+        _amount (float, optional) : should be equals to ``_quantity`` * ``_unitPrice``
+        _currency (str) : currency iso code (ex: EUR, USD, ...)
+        _row (str, optional) : original line in the broker's file
+
+    Returns:
+        True if market order is correctly added in ``_file``, False if not
+    """
+
     # controler que _type est une valeur connue
     # les seules valeurs autorisées sont celles de la variable globale TYPES
     if len([x for x in TYPES if str(x) == _type]) == 0:
@@ -408,7 +431,7 @@ def _add_order(
 
     return True
 
-
+# @TODO retirer la référence à _file et _fieldnames puisque ces deniers sont fixés par le programme lui même
 def _add_dividend(
     _file,
     _fieldnames,
@@ -416,10 +439,29 @@ def _add_dividend(
     _broker: str,
     _type: str,
     _tickerCode: str,
-    _isinCode: str,  # DATE, BROKER, "DIVIDEND" OR "TAX", TICKER, ISIN,
+    _isinCode: str,
     _amount: float,
     _currency: str,
-):  # AMOUNT, CURRENCY
+):
+    """ 
+    Ajoute dans le fichier .CSV ``_file`` un dividende caractérisé par sa date de perception, son montant,
+    sa référence isin, sa référence de ticker, la monnaie du dividende perçu\n
+    
+    Args:
+        _file (str) : csv file name
+        _fieldnames (list) : à retirer
+        _date (datetime) : execution date
+        _broker (str) : broker's name
+        _type (str) : one value in ["DIVIDEND", "TAX"]
+        _tickerCode (str) : ticker code
+        _isinCode (str) : isin code
+        _amount (float) : dividend's amount
+        _currency (str) : currency iso code (ex: EUR, USD, ...)
+
+    Returns:
+        True if market order is correctly added in ``_file``, False if not
+    """
+
     # controler que _type est une valeur connue
     # les seules valeurs autorisées sont celles de la variable globale TYPES
     if len([x for x in TYPES if str(x) == _type]) == 0:
