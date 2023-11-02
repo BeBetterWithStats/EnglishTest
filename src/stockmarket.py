@@ -345,7 +345,7 @@ def _add_order(
     _row: str,
 ):
     """ 
-    Ajoute dans le fichier .CSV ``_file`` un ordre de bourse caractérisé par sa date d'exécution, son montant,
+    Ajoute dans le fichier .CSV ``_outcome`` un ordre de bourse caractérisé par sa date d'exécution, son montant,
     sa référence isin, sa référence de ticker, le sens d'opération (vente ou achat),
     la quantité échangée, le prix unitaire et la monnaie de l'instrument financier\n
     
