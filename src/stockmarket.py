@@ -15,6 +15,18 @@ from forex_python.converter import CurrencyRates
 
 PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/data/stocks"
 TYPES = ["BUY", "SELL", "DIVIDEND", "TAX"]
+STOCKS_ORDERS_HEADER = [
+            "DATE",
+            "BROKER",
+            "TYPE",
+            "TICKER",
+            "ISIN",
+            "QUANTITY",
+            "UNIT PRICE",
+            "AMOUNT",
+            "CURRENCY",
+        ]
+
 DEFAULT_VALUE = "TBD"
 MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 
@@ -320,8 +332,7 @@ def _find_broker(_file) -> tuple:
 
 # @TODO retirer la référence à _file et _fieldnames puisque ces deniers sont fixés par le programme lui même
 def _add_order(
-    _file,
-    _fieldnames,
+    _outcome,
     _date: datetime,
     _broker: str,
     _type: str,
@@ -339,8 +350,7 @@ def _add_order(
     la quantité échangée, le prix unitaire et la monnaie de l'instrument financier\n
     
     Args:
-        _file (str) : csv file name
-        _fieldnames (list) : à retirer
+        _outcome (DictWriter) : csv file
         _date (datetime) : execution date
         _broker (str) : broker's name
         _type (str) : one value in ["BUY", "SELL"]
@@ -426,8 +436,7 @@ def _add_order(
     }
     # print(f"[DEBUG] row = {row}")
 
-    writer = csv.DictWriter(_file, fieldnames=_fieldnames)
-    writer.writerow(row)
+    _outcome.writerow(row)
 
     return True
 
@@ -499,20 +508,8 @@ def _add_dividend(
 # lister l'ensemble des ordres de bourse
 # dans le fichier CSV fourni en paramètre _outcome
 def list_all_stockMarket_order(_outcome):
-    FIELDNAMES = [
-        "DATE",
-        "BROKER",
-        "TYPE",
-        "TICKER",
-        "ISIN",
-        "QUANTITY",
-        "UNIT PRICE",
-        "AMOUNT",
-        "CURRENCY",
-    ]
-
-    # initialisation du fichier de résultat
-    writer = csv.DictWriter(_outcome, fieldnames=FIELDNAMES)
+    
+    writer = csv.DictWriter(_outcome, fieldnames=STOCKS_ORDERS_HEADER)
     writer.writeheader()
 
     # pour chaque fichier .csv trouvé dans le répertoire PATH
@@ -630,8 +627,7 @@ def list_all_stockMarket_order(_outcome):
 
                 # ajoute à _outcome les données présentes dans chaque fichier du broker
                 _add_order(
-                    _outcome,
-                    FIELDNAMES,
+                    writer,
                     date,
                     brocker[0],
                     type,
@@ -643,8 +639,7 @@ def list_all_stockMarket_order(_outcome):
                     currency,
                     row.__str__(),
                 )
-    # TODO trier le fichier
-
+    
     # Sortie OK lorsque toutes les lignes ont été insérées
     return True
 
