@@ -336,7 +336,7 @@ def _find_broker(_file) -> tuple:
 
 # @TODO retirer la référence à _file et _fieldnames puisque ces deniers sont fixés par le programme lui même
 def _add_order(
-    _outcome,
+    _outcome : csv.DictWriter,
     _date: datetime,
     _broker: str,
     _type: str,
