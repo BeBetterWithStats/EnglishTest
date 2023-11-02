@@ -547,16 +547,14 @@ def list_all_stockMarket_order(_outcome):
                         )  # value = <value_if_true> if <expression> else <value_if_false>
                         isin = row["Code ISIN"]
                         quantity = abs(float(row["Quantité"]))
-                        price = row["Cours"]
                         amount = (
-                            str(row["Montant devise locale"])
+                            str(row["Montant"])
                             .replace(",", "")
                             .replace("-", "")
                         )
-                        currency = row[
-                            ""
-                        ]  # TODO smelly code due to DEGIRO  with several empty fieldnames
-                        ticker = _find_ticker(isin, currency)
+                        price = round(float(amount) / quantity,2)
+                        currency = row[""]  # TODO smelly code puisque DEGIRO spécifie des noms de colonnes vides  --> "EUR"
+                        ticker = _find_isin(isin, currency)
 
                     case "TRADING 212":
                         # mapping du type d'opération
