@@ -242,6 +242,27 @@ def _find_broker(_file) -> tuple:
         "",
         "ID Ordre",
     ]
+    FIELDNAMES_DEGIRO_V_3 = [
+        "Date",
+        "Heure",
+        "Produit",
+        "Code ISIN",
+        "Place boursiè",
+        "Lieu d'exécution",
+        "Quantité",
+        "Cours",
+        "Devise du cours",
+        "Montant devise locale",
+        "Devise Locale",
+        "Montant",
+        "Devise",
+        "Taux de change",
+        "Frais de courtage",
+        "Devise des frais",
+        "Montant négocié",
+        "Devise du montant négocié",
+        "ID Ordre",
+    ]
     FIELDNAMES_REVOLUT_V_1 = [
         "Date",
         "Ticker",
@@ -318,6 +339,9 @@ def _find_broker(_file) -> tuple:
             return "DEGIRO", ["_add_dividend"]
 
         if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_V_2):
+            return "DEGIRO", ["_add_order"]
+
+        if reader.fieldnames.__eq__(FIELDNAMES_DEGIRO_V_3):
             return "DEGIRO", ["_add_order"]
 
         if reader.fieldnames.__eq__(FIELDNAMES_REVOLUT_V_1):
