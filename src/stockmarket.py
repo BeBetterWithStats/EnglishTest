@@ -31,7 +31,7 @@ ORDERS_HEADER = [
     "AMOUNT",
     "CURRENCY",
 ]
-PORTFOLIO_HEADER = ["BROKER", "TICKER", "ISIN", "QUANTITY", "UNIT PRICE", "CURRENCY"]
+PORTFOLIO_HEADER = ["BROKER", "ID (ticker or isin)", "QUANTITY", "UNIT PRICE", "CURRENCY"]
 DEFAULT_VALUE = "TBD"
 MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 
@@ -927,30 +927,31 @@ def get_portfolio(_input: str, _outcome: str):
     reader = csv.DictReader(input)
 
     for row in reader:
-        if row["TICKER"] in assets:
-            q1 = float(assets[row["TICKER"]]["quantity"])
+
+        id = row["TICKER"] if len(row["TICKER"]) > 0 else row["ISIN"]
+
+        if id in assets:
+            q1 = float(assets[id]["quantity"])
             q2 = float(row["QUANTITY"])
-            p1 = float(assets[row["TICKER"]]["unit price"])
+            p1 = float(assets[id]["unit price"])
             p2 = float(row["UNIT PRICE"])
 
             if row["TYPE"] == "BUY":
                 asset_value = {
-                    "quantity": q1 + q2,
-                    "unit price": (q1 * p1 + q2 * p2) / (q1 + q2)
+                    "quantity": round(q1 + q2,3),
+                    "unit price": round((q1 * p1 + q2 * p2) / (q1 + q2),3)
                     if q1 + q2 != 0
                     else 0,
                     "currency": row["CURRENCY"],
-                    "isin": row["ISIN"],
                     "broker": row["BROKER"],
                 }
             elif row["TYPE"] == "SELL":
                 asset_value = {
-                    "quantity": q1 - q2,
-                    "unit price": (q1 * p1 - q2 * p2) / (q1 - q2)
+                    "quantity": round(q1 - q2,3),
+                    "unit price": round((q1 * p1 - q2 * p2) / (q1 - q2),3)
                     if q1 - q2 != 0
                     else 0,
                     "currency": row["CURRENCY"],
-                    "isin": row["ISIN"],
                     "broker": row["BROKER"],
                 }
             else:
@@ -962,7 +963,6 @@ def get_portfolio(_input: str, _outcome: str):
                     "quantity": row["QUANTITY"],
                     "unit price": row["UNIT PRICE"],
                     "currency": row["CURRENCY"],
-                    "isin": row["ISIN"],
                     "broker": row["BROKER"],
                 }
             elif row["TYPE"] == "SELL":
@@ -970,13 +970,12 @@ def get_portfolio(_input: str, _outcome: str):
                     "quantity": "-" + row["QUANTITY"],
                     "unit price": "-" + row["UNIT PRICE"],
                     "currency": row["CURRENCY"],
-                    "isin": row["ISIN"],
                     "broker": row["BROKER"],
                 }
             else:
                 continue
 
-        assets[row["TICKER"]] = asset_value
+        assets[id] = asset_value
 
     writer = csv.DictWriter(outcome, fieldnames=PORTFOLIO_HEADER)
     writer.writeheader()
@@ -984,8 +983,7 @@ def get_portfolio(_input: str, _outcome: str):
     for asset in sorted(assets):
         row = {
             "BROKER": assets[asset]["broker"],
-            "TICKER": asset,
-            "ISIN": assets[asset]["isin"],
+            "ID (ticker or isin)": asset,
             "QUANTITY": assets[asset]["quantity"],
             "UNIT PRICE": assets[asset]["unit price"],
             "CURRENCY": assets[asset]["currency"],
