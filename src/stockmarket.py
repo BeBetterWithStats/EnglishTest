@@ -544,7 +544,7 @@ def list_all_stockMarket_order(_outcome: str):
         _outcome (str) : complete path of the csv file
     
     Returns:
-        True if market order is correctly added in ``_file``, False if not
+        True if market order is correctly added in ``_outcome``, False if not
     
     """
     
@@ -699,7 +699,7 @@ def list_all_stockMarket_order_sorted(_outcome):
         _outcome (str) : complete path of the csv file
     
     Returns:
-        True if market order is correctly added in ``_file``, False if not
+        True if market order is correctly added in ``_outcome``, False if not
     
     """
     assets = []
