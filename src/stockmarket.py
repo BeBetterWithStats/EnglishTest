@@ -31,7 +31,13 @@ ORDERS_HEADER = [
     "AMOUNT",
     "CURRENCY",
 ]
-PORTFOLIO_HEADER = ["BROKER", "ID (ticker or isin)", "QUANTITY", "UNIT PRICE", "CURRENCY"]
+PORTFOLIO_HEADER = [
+    "BROKER",
+    "ID (ticker or isin)",
+    "QUANTITY",
+    "UNIT PRICE",
+    "CURRENCY",
+]
 DEFAULT_VALUE = "TBD"
 MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 
@@ -155,7 +161,7 @@ def _convert_currencies(_from, _to, _amount, _date) -> float:
     currency_API = CurrencyRates()
     try:
         return (
-            round(currency_API.get_rate(_from, _to, _date) * float(_amount), 2)
+            round(currency_API.get_rate(_from, _to, _date) * float(_amount), 3)
             if _from != _to
             else float(_amount)
         )
@@ -595,9 +601,9 @@ def group_all_stock_market_order(_outcome: str):
                             "BUY" if float(row[9]) < 0 else "SELL"
                         )  # value = <value_if_true> if <expression> else <value_if_false>
                         isin = row[3]
-                        quantity = abs(float(row[6]))
-                        amount = str(row[9]).replace(",", "").replace("-", "")
-                        price = round(float(amount) / quantity, 2)
+                        quantity = row[6].replace(",", "").replace("-", "")
+                        amount = row[9].replace(",", "").replace("-", "")
+                        price = round(float(amount) / float(quantity), 3)
                         currency = row[8]
                         ticker = ""
 
@@ -608,12 +614,12 @@ def group_all_stock_market_order(_outcome: str):
                                 type = ALL_TYPES[0]
                                 quantity = row[5].replace(",", "").replace("-", "")
                                 price = row[6].replace(",", "").replace("-", "")
-                                amount = round(float(quantity) * float(price), 2)
+                                amount = round(float(quantity) * float(price), 3)
                             case "MARKET SELL":
                                 type = ALL_TYPES[1]
                                 quantity = row[5].replace(",", "").replace("-", "")
                                 price = row[6].replace(",", "").replace("-", "")
-                                amount = round(float(quantity) * float(price), 2)
+                                amount = round(float(quantity) * float(price), 3)
                             case _:
                                 type = row[0]
                                 quantity = 0
@@ -725,9 +731,9 @@ def group_and_sort_all_stock_market_order(_outcome):
                             "BUY" if float(row[9]) < 0 else "SELL"
                         )  # value = <value_if_true> if <expression> else <value_if_false>
                         isin = row[3]
-                        quantity = abs(float(row[6]))
-                        amount = str(row[9]).replace(",", "").replace("-", "")
-                        price = round(float(amount) / quantity, 2)
+                        quantity = row[6].replace(",", "").replace("-", "")
+                        amount = row[9].replace(",", "").replace("-", "")
+                        price = round(float(amount) / float(quantity), 3)
                         currency = row[8]
                         ticker = ""
 
@@ -738,12 +744,12 @@ def group_and_sort_all_stock_market_order(_outcome):
                                 type = ALL_TYPES[0]
                                 quantity = row[5].replace(",", "").replace("-", "")
                                 price = row[6].replace(",", "").replace("-", "")
-                                amount = round(float(quantity) * float(price), 2)
+                                amount = round(float(quantity) * float(price), 3)
                             case "MARKET SELL":
                                 type = ALL_TYPES[1]
                                 quantity = row[5].replace(",", "").replace("-", "")
                                 price = row[6].replace(",", "").replace("-", "")
-                                amount = round(float(quantity) * float(price), 2)
+                                amount = round(float(quantity) * float(price), 3)
                             case _:
                                 type = row[0]
                                 quantity = 0
@@ -927,7 +933,6 @@ def get_portfolio(_input: str, _outcome: str):
     reader = csv.DictReader(input)
 
     for row in reader:
-
         id = row["TICKER"] if len(row["TICKER"]) > 0 else row["ISIN"]
 
         if id in assets:
@@ -938,8 +943,8 @@ def get_portfolio(_input: str, _outcome: str):
 
             if row["TYPE"] == "BUY":
                 asset_value = {
-                    "quantity": round(q1 + q2,3),
-                    "unit price": round((q1 * p1 + q2 * p2) / (q1 + q2),3)
+                    "quantity": round(q1 + q2, 3),
+                    "unit price": round((q1 * p1 + q2 * p2) / (q1 + q2), 3)
                     if q1 + q2 != 0
                     else 0,
                     "currency": row["CURRENCY"],
@@ -947,8 +952,8 @@ def get_portfolio(_input: str, _outcome: str):
                 }
             elif row["TYPE"] == "SELL":
                 asset_value = {
-                    "quantity": round(q1 - q2,3),
-                    "unit price": round((q1 * p1 - q2 * p2) / (q1 - q2),3)
+                    "quantity": round(q1 - q2, 3),
+                    "unit price": round((q1 * p1 - q2 * p2) / (q1 - q2), 3)
                     if q1 - q2 != 0
                     else 0,
                     "currency": row["CURRENCY"],
@@ -960,15 +965,15 @@ def get_portfolio(_input: str, _outcome: str):
         else:
             if row["TYPE"] == "BUY":
                 asset_value = {
-                    "quantity": row["QUANTITY"],
-                    "unit price": row["UNIT PRICE"],
+                    "quantity": round(float(row["QUANTITY"]), 3),
+                    "unit price": round(float(row["UNIT PRICE"]), 3),
                     "currency": row["CURRENCY"],
                     "broker": row["BROKER"],
                 }
             elif row["TYPE"] == "SELL":
                 asset_value = {
-                    "quantity": "-" + row["QUANTITY"],
-                    "unit price": "-" + row["UNIT PRICE"],
+                    "quantity": round(float("-" + row["QUANTITY"]), 3),
+                    "unit price": round(float(row["UNIT PRICE"]), 3),
                     "currency": row["CURRENCY"],
                     "broker": row["BROKER"],
                 }
