@@ -545,7 +545,6 @@ def list_all_stockMarket_order(_outcome: str):
     
     Returns:
         True if market order is correctly added in ``_outcome``, False if not
-    
     """
     
     outcome = open(_outcome, "w")
@@ -700,7 +699,6 @@ def list_all_stockMarket_order_sorted(_outcome):
     
     Returns:
         True if market order is correctly added in ``_outcome``, False if not
-    
     """
     assets = []
     outcome = open(_outcome, "w")
