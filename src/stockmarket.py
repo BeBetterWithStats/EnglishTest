@@ -536,7 +536,7 @@ def _add_dividend(
 ##########################################################################
 
 
-def list_all_stockMarket_order(_outcome: str):
+def group_all_stockMarket_order(_outcome: str):
     """
     Regroupe l'ensemble des ordres de bourse des différents brokers dans le fichier .CSV ``_outcome``\n
     
@@ -689,7 +689,7 @@ def list_all_stockMarket_order(_outcome: str):
     # Sortie OK lorsque toutes les lignes ont été insérées
     return True
 
-def list_all_stockMarket_order_sorted(_outcome):
+def group_and_sort_all_stockMarket_order(_outcome):
     """
     Regroupe l'ensemble des ordres de bourse des différents brokers dans le fichier .CSV ``_outcome``
     en les triant pas ordre chronologique (du plus ancien au plus récent ).\n
@@ -1049,7 +1049,7 @@ def main():
             print(f"🔜 Le résultat sera disponible dans {BROKERS_DATA_PATH}/all stockmarket orders.csv")
             print()
             print()
-            list_all_stockMarket_order(BROKERS_DATA_PATH + "/all stockmarket orders.csv")
+            group_all_stockMarket_order(BROKERS_DATA_PATH + "/all stockmarket orders.csv")
 
         case "2":  # LISTER ET CLASSER TOUTES LES OPERATIONS ACHAT / VENTE DE TITRE
             print()
@@ -1058,14 +1058,14 @@ def main():
             )
             print()
             print()
-            list_all_stockMarket_order_sorted(BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv")
+            group_and_sort_all_stockMarket_order(BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv")
 
         case "3":  # DONNER LA COMPOSITION D'UN PORTEFEUILLE
             print()
             print(f"🔜 Le résultat sera disponible dans {BROKERS_DATA_PATH}/portfolio.csv")
             print()
             print()
-            list_all_stockMarket_order_sorted(
+            group_and_sort_all_stockMarket_order(
                 open(BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv", "w")
             )
             assets = get_stockMarket_portfolio(
