@@ -13,22 +13,24 @@ from forex_python.converter import CurrencyRates
 # FIN -- IMPORTS
 
 
-BROKERS_DATA_PATH = "/Users/alexandrelods/Documents/Developpement/PythonCode/data/stocks"
+BROKERS_DATA_PATH = (
+    "/Users/alexandrelods/Documents/Developpement/PythonCode/data/stocks"
+)
 
 ORDER_TYPES = ["BUY", "SELL"]
 DIVIDEND_TYPES = ["DIVIDEND", "TAX"]
 ALL_TYPES = ORDER_TYPES + DIVIDEND_TYPES
 STOCKS_ORDERS_HEADER = [
-            "DATE",
-            "BROKER",
-            "TYPE",
-            "TICKER",
-            "ISIN",
-            "QUANTITY",
-            "UNIT PRICE",
-            "AMOUNT",
-            "CURRENCY",
-        ]
+    "DATE",
+    "BROKER",
+    "TYPE",
+    "TICKER",
+    "ISIN",
+    "QUANTITY",
+    "UNIT PRICE",
+    "AMOUNT",
+    "CURRENCY",
+]
 DEFAULT_VALUE = "TBD"
 MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 
@@ -39,12 +41,13 @@ MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 #  💣  💥  🔥  📛  ⛔  ❌  🚫  ❗  ✅
 #  🚧  🚨  💬
 #  🌩  🌧  🌥
-#  ⏰  
+#  ⏰
 #  📁  📄  📝  🔎
 #  🔜  ⇢
 
+
 def list_fileNames(_folder) -> list:
-    """ 
+    """
     Retourne une liste de nom de fichier présent dans le répertoire passé en paramètre\n
 
     Args:
@@ -62,9 +65,9 @@ def list_fileNames(_folder) -> list:
 
 
 def start_program() -> datetime:
-    """ 
+    """
     Message de démarrage du programme, renvoie l'heure exacte de démarrage du programme\n
-    
+
     Returns:
         datime.now()
     """
@@ -76,9 +79,9 @@ def start_program() -> datetime:
 
 
 def menu() -> str:
-    """ 
+    """
     Affiche un menu de sélection\n
-    
+
     Returns:
         the user's prompt
     """
@@ -95,9 +98,9 @@ def menu() -> str:
 
 
 def end_program() -> datetime:
-    """ 
+    """
     Message de fin du programme, renvoie l'heure exacte de fin du programme\n
-    
+
     Returns:
         datime.now()
     """
@@ -109,7 +112,7 @@ def end_program() -> datetime:
 
 # TEMPS D'EXECUTION DU PROGRAMME
 def print_executionTime(_start, _finish) -> datetime:
-    """ 
+    """
     Mesure le temps écoulé entre deux dates et l'affiche en console\n
 
     Args:
@@ -135,9 +138,9 @@ def print_executionTime(_start, _finish) -> datetime:
 
 
 def _convert_currencies(_from, _to, _amount, _date) -> float:
-    """ 
+    """
     Converti une somme exprimée en monnaie ``_from`` vers la monnaire ``_to`` au taux de conversion valable à la date ``_date``\n
-    
+
     Args:
         _from (str) : initial currency
         _to (str) : final currency
@@ -192,9 +195,9 @@ def _find_ticker(_isin, _currency):
 
 
 def _find_broker(_file) -> tuple:
-    """ 
+    """
     Détermine le broker utilisé pour générer le fichier des ordres de bourse\n
-    
+
     Args:
         _file (str) : file name
 
@@ -204,9 +207,9 @@ def _find_broker(_file) -> tuple:
 
     ###########################
     #
-    # LISTER ICI TOUTES LES ENTETES POSSIBLES 
+    # LISTER ICI TOUTES LES ENTETES POSSIBLES
     # DE FICHIER CSV EMIS PAR LES DIFFERENTS BROKERS
-    # 
+    #
     ###########################
     FIELDNAMES_DEGIRO_V_1 = [
         "Date",
@@ -359,8 +362,9 @@ def _find_broker(_file) -> tuple:
 
     return "", None
 
+
 def _add_order(
-    _outcome : csv.DictWriter,
+    _outcome: csv.DictWriter,
     _date: datetime,
     _broker: str,
     _type: str,
@@ -372,11 +376,11 @@ def _add_order(
     _currency: str,
     _row: str,
 ):
-    """ 
+    """
     Ajoute dans le fichier .CSV ``_outcome`` un ordre de bourse caractérisé par sa date d'exécution, son montant,
     sa référence isin, sa référence de ticker, le sens d'opération (vente ou achat),
     la quantité échangée, le prix unitaire et la monnaie de l'instrument financier\n
-    
+
     Args:
         _outcome (DictWriter) : csv file
         _date (datetime) : execution date
@@ -393,15 +397,15 @@ def _add_order(
     Returns:
         True if market order is correctly added in ``_file``, False if not
     """
-    
-    # le controle que _date est une date est effectué 
+
+    # le controle que _date est une date est effectué
     # par python lui-meme en ayant précisé ``: datetime`` en description de la fonction
 
     # _type doit etre une valeur connue
     # parmi les seules valeurs autorisées lors de l'ajout d'un ordre de bourse
     if len([x for x in ORDER_TYPES if str(x) == _type]) == 0:
-        #print(f"🚧 ligne échappée {_row} RAISON = _type (valeur = '{_type}') n'est pas géré ")
-        return False # sort de la méthode
+        # print(f"🚧 ligne échappée {_row} RAISON = _type (valeur = '{_type}') n'est pas géré ")
+        return False  # sort de la méthode
 
     # _quantity doit être un nombre positif ou nul
     try:
@@ -450,7 +454,6 @@ def _add_order(
 
     # le fichier _outcome doit posséder un certain format
     if _outcome.fieldnames.__eq__(STOCKS_ORDERS_HEADER):
-
         # on crée une ligne dans le fichier csv
         row = {
             "DATE": _date.strftime("%Y/%m/%d"),
@@ -471,6 +474,7 @@ def _add_order(
 
     return False
 
+
 # @TODO retirer la référence à _file et _fieldnames puisque ces deniers sont fixés par le programme lui même
 def _add_dividend(
     _file,
@@ -483,10 +487,10 @@ def _add_dividend(
     _amount: float,
     _currency: str,
 ):
-    """ 
+    """
     Ajoute dans le fichier .CSV ``_file`` un dividende caractérisé par sa date de perception, son montant,
     sa référence isin, sa référence de ticker, la monnaie du dividende perçu\n
-    
+
     Args:
         _file (str) : csv file name
         _fieldnames (list) : à retirer
@@ -539,14 +543,14 @@ def _add_dividend(
 def group_all_stock_market_order(_outcome: str):
     """
     Regroupe l'ensemble des ordres de bourse des différents brokers dans le fichier .CSV ``_outcome``\n
-    
+
     Args:
         _outcome (str) : complete path of the csv file
-    
+
     Returns:
         True if market order is correctly added in ``_outcome``, False if not
     """
-    
+
     outcome = open(_outcome, "w")
     writer = csv.DictWriter(outcome, fieldnames=STOCKS_ORDERS_HEADER)
     writer.writeheader()
@@ -564,17 +568,20 @@ def group_all_stock_market_order(_outcome: str):
 
             # si le fichier du brocker n'est pas compatible avec la fonctionnalité
             if not brocker_operation or not "_add_order" in brocker_operation:
-                print(f"❌ le fichier n'est pas compatible avec la fonctionnalité ``market orders``")
+                print(
+                    f"❌ le fichier n'est pas compatible avec la fonctionnalité ``market orders``"
+                )
                 continue
-            else :
-                print(f"✅ le fichier est compatible avec la fonctionnalité ``market orders``")
+            else:
+                print(
+                    f"✅ le fichier est compatible avec la fonctionnalité ``market orders``"
+                )
 
             is_header = True
             # pour chaque ligne du fichier csv
             for row in reader:
-                
                 # pour retirer la ligne d'entete de chaque fichier csv
-                if is_header :
+                if is_header:
                     is_header = False
                     continue
 
@@ -588,12 +595,8 @@ def group_all_stock_market_order(_outcome: str):
                         )  # value = <value_if_true> if <expression> else <value_if_false>
                         isin = row[3]
                         quantity = abs(float(row[6]))
-                        amount = (
-                            str(row[9])
-                            .replace(",", "")
-                            .replace("-", "")
-                        )
-                        price = round(float(amount) / quantity,2)
+                        amount = str(row[9]).replace(",", "").replace("-", "")
+                        price = round(float(amount) / quantity, 2)
                         currency = row[8]
                         ticker = ""
 
@@ -602,29 +605,13 @@ def group_all_stock_market_order(_outcome: str):
                         match str(row[0]).upper():
                             case "MARKET BUY":
                                 type = ALL_TYPES[0]
-                                quantity = (
-                                    row[5]
-                                    .replace(",", "")
-                                    .replace("-", "")
-                                )
-                                price = (
-                                    row[6]
-                                    .replace(",", "")
-                                    .replace("-", "")
-                                )
+                                quantity = row[5].replace(",", "").replace("-", "")
+                                price = row[6].replace(",", "").replace("-", "")
                                 amount = round(float(quantity) * float(price), 2)
                             case "MARKET SELL":
                                 type = ALL_TYPES[1]
-                                quantity = (
-                                    row[5]
-                                    .replace(",", "")
-                                    .replace("-", "")
-                                )
-                                price = (
-                                    row[6]
-                                    .replace(",", "")
-                                    .replace("-", "")
-                                )
+                                quantity = row[5].replace(",", "").replace("-", "")
+                                price = row[6].replace(",", "").replace("-", "")
                                 amount = round(float(quantity) * float(price), 2)
                             case _:
                                 type = row[0]
@@ -651,16 +638,8 @@ def group_all_stock_market_order(_outcome: str):
                                 quantity = 0
 
                         date = datetime.fromisoformat(row[0])
-                        price = (
-                            str(row[4])[1:]
-                            .replace(",", "")
-                            .replace("-", "")
-                        )
-                        amount = (
-                            str(row[5])[1:]
-                            .replace(",", "")
-                            .replace("-", "")
-                        )
+                        price = str(row[4])[1:].replace(",", "").replace("-", "")
+                        amount = str(row[5])[1:].replace(",", "").replace("-", "")
                         ticker = row[1]
                         currency = row[6]
                         isin = ""
@@ -685,18 +664,19 @@ def group_all_stock_market_order(_outcome: str):
                     currency,
                     row.__str__(),
                 )
-    
+
     # Sortie OK lorsque toutes les lignes ont été insérées
     return True
+
 
 def group_and_sort_all_stock_market_order(_outcome):
     """
     Regroupe l'ensemble des ordres de bourse des différents brokers dans le fichier .CSV ``_outcome``
     en les triant pas ordre chronologique (du plus ancien au plus récent ).\n
-    
+
     Args:
         _outcome (str) : complete path of the csv file
-    
+
     Returns:
         True if market order is correctly added in ``_outcome``, False if not
     """
@@ -718,17 +698,20 @@ def group_and_sort_all_stock_market_order(_outcome):
 
             # si le fichier du brocker n'est pas compatible avec la fonctionnalité
             if not brocker_operation or not "_add_order" in brocker_operation:
-                print(f"❌ le fichier n'est pas compatible avec la fonctionnalité ``market orders``")
+                print(
+                    f"❌ le fichier n'est pas compatible avec la fonctionnalité ``market orders``"
+                )
                 continue
-            else :
-                print(f"✅ le fichier est compatible avec la fonctionnalité ``market orders``")
+            else:
+                print(
+                    f"✅ le fichier est compatible avec la fonctionnalité ``market orders``"
+                )
 
             is_header = True
             # pour chaque ligne du fichier csv
             for row in reader:
-                
                 # pour retirer la ligne d'entete de chaque fichier csv
-                if is_header :
+                if is_header:
                     is_header = False
                     continue
 
@@ -742,12 +725,8 @@ def group_and_sort_all_stock_market_order(_outcome):
                         )  # value = <value_if_true> if <expression> else <value_if_false>
                         isin = row[3]
                         quantity = abs(float(row[6]))
-                        amount = (
-                            str(row[9])
-                            .replace(",", "")
-                            .replace("-", "")
-                        )
-                        price = round(float(amount) / quantity,2)
+                        amount = str(row[9]).replace(",", "").replace("-", "")
+                        price = round(float(amount) / quantity, 2)
                         currency = row[8]
                         ticker = ""
 
@@ -756,29 +735,13 @@ def group_and_sort_all_stock_market_order(_outcome):
                         match str(row[0]).upper():
                             case "MARKET BUY":
                                 type = ALL_TYPES[0]
-                                quantity = (
-                                    row[5]
-                                    .replace(",", "")
-                                    .replace("-", "")
-                                )
-                                price = (
-                                    row[6]
-                                    .replace(",", "")
-                                    .replace("-", "")
-                                )
+                                quantity = row[5].replace(",", "").replace("-", "")
+                                price = row[6].replace(",", "").replace("-", "")
                                 amount = round(float(quantity) * float(price), 2)
                             case "MARKET SELL":
                                 type = ALL_TYPES[1]
-                                quantity = (
-                                    row[5]
-                                    .replace(",", "")
-                                    .replace("-", "")
-                                )
-                                price = (
-                                    row[6]
-                                    .replace(",", "")
-                                    .replace("-", "")
-                                )
+                                quantity = row[5].replace(",", "").replace("-", "")
+                                price = row[6].replace(",", "").replace("-", "")
                                 amount = round(float(quantity) * float(price), 2)
                             case _:
                                 type = row[0]
@@ -805,16 +768,8 @@ def group_and_sort_all_stock_market_order(_outcome):
                                 quantity = 0
 
                         date = datetime.fromisoformat(row[0])
-                        price = (
-                            str(row[4])[1:]
-                            .replace(",", "")
-                            .replace("-", "")
-                        )
-                        amount = (
-                            str(row[5])[1:]
-                            .replace(",", "")
-                            .replace("-", "")
-                        )
+                        price = str(row[4])[1:].replace(",", "").replace("-", "")
+                        amount = str(row[5])[1:].replace(",", "").replace("-", "")
                         ticker = row[1]
                         currency = row[6]
                         isin = ""
@@ -824,7 +779,6 @@ def group_and_sort_all_stock_market_order(_outcome):
                         print(f"  Revoir le nom du fichier")
                         print(f"  ou ajouter le broker au programme stocks.py")
                         break
-
 
                 # assets.append(
                 # 				{
@@ -853,7 +807,7 @@ def group_and_sort_all_stock_market_order(_outcome):
                     )
                 )
 
-    #print(assets)
+    # print(assets)
 
     for asset in sorted(assets, key=lambda asset: asset[0].isoformat()):
         _add_order(
@@ -974,7 +928,7 @@ def get_stockMarket_portfolio(_input, _output):
                     else 0,
                     "currency": row["CURRENCY"],
                     "isin": row["ISIN"],
-                    "broker": row["BROKER"]
+                    "broker": row["BROKER"],
                 }
             elif row["TYPE"] == "SELL":
                 asset_value = {
@@ -984,7 +938,7 @@ def get_stockMarket_portfolio(_input, _output):
                     else 0,
                     "currency": row["CURRENCY"],
                     "isin": row["ISIN"],
-                    "broker": row["BROKER"]
+                    "broker": row["BROKER"],
                 }
             else:
                 continue
@@ -996,7 +950,7 @@ def get_stockMarket_portfolio(_input, _output):
                     "unit price": row["UNIT PRICE"],
                     "currency": row["CURRENCY"],
                     "isin": row["ISIN"],
-                    "broker": row["BROKER"]
+                    "broker": row["BROKER"],
                 }
             elif row["TYPE"] == "SELL":
                 asset_value = {
@@ -1004,7 +958,7 @@ def get_stockMarket_portfolio(_input, _output):
                     "unit price": "-" + row["UNIT PRICE"],
                     "currency": row["CURRENCY"],
                     "isin": row["ISIN"],
-                    "broker": row["BROKER"]
+                    "broker": row["BROKER"],
                 }
             else:
                 continue
@@ -1014,7 +968,7 @@ def get_stockMarket_portfolio(_input, _output):
     writer = csv.DictWriter(_output, fieldnames=FIELDNAMES)
     writer.writeheader()
 
-    for asset in sorted(assets) :
+    for asset in sorted(assets):
         row = {
             "BROKER": assets[asset]["broker"],
             "TICKER": asset,
@@ -1046,10 +1000,14 @@ def main():
     match menu():
         case "1":  # LISTER TOUTES LES OPERATIONS ACHAT / VENTE DE TITRE
             print()
-            print(f"🔜 Le résultat sera disponible dans {BROKERS_DATA_PATH}/all stockmarket orders.csv")
+            print(
+                f"🔜 Le résultat sera disponible dans {BROKERS_DATA_PATH}/all stockmarket orders.csv"
+            )
             print()
             print()
-            group_all_stock_market_order(BROKERS_DATA_PATH + "/all stockmarket orders.csv")
+            group_all_stock_market_order(
+                BROKERS_DATA_PATH + "/all stockmarket orders.csv"
+            )
 
         case "2":  # LISTER ET CLASSER TOUTES LES OPERATIONS ACHAT / VENTE DE TITRE
             print()
@@ -1058,11 +1016,15 @@ def main():
             )
             print()
             print()
-            group_and_sort_all_stock_market_order(BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv")
+            group_and_sort_all_stock_market_order(
+                BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv"
+            )
 
         case "3":  # DONNER LA COMPOSITION D'UN PORTEFEUILLE
             print()
-            print(f"🔜 Le résultat sera disponible dans {BROKERS_DATA_PATH}/portfolio.csv")
+            print(
+                f"🔜 Le résultat sera disponible dans {BROKERS_DATA_PATH}/portfolio.csv"
+            )
             print()
             print()
             group_and_sort_all_stock_market_order(
@@ -1089,11 +1051,13 @@ def main():
             print(f"📁 {BROKERS_DATA_PATH}")
             print()
             # pour chaque fichier .csv trouvé dans le répertoire PATH
-            for f in [x for x in list_fileNames(BROKERS_DATA_PATH) if str(x).endswith(".csv")]:
+            for f in [
+                x for x in list_fileNames(BROKERS_DATA_PATH) if str(x).endswith(".csv")
+            ]:
                 print(_find_broker(f))
 
-		# sandbox
-		# scenario à venir
+        # sandbox
+        # scenario à venir
         case "_yfinance":
             msft = yfinance.Ticker("CNDX")
             print("isin = " + msft.get_isin())
@@ -1113,7 +1077,7 @@ def main():
             )  # api_json = api_response.json() if api_response and api_response.status_code == 200 else None
             print()
             print(api_json)
-			
+
         case _:
             # print()
             print("❌ ce choix n'existe pas")
