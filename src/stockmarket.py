@@ -20,7 +20,7 @@ BROKERS_DATA_PATH = (
 ORDER_TYPES = ["BUY", "SELL"]
 DIVIDEND_TYPES = ["DIVIDEND", "TAX"]
 ALL_TYPES = ORDER_TYPES + DIVIDEND_TYPES
-STOCKS_ORDERS_HEADER = [
+ORDERS_HEADER = [
     "DATE",
     "BROKER",
     "TYPE",
@@ -31,6 +31,7 @@ STOCKS_ORDERS_HEADER = [
     "AMOUNT",
     "CURRENCY",
 ]
+PORTFOLIO_HEADER = ["BROKER", "TICKER", "ISIN", "QUANTITY", "UNIT PRICE", "CURRENCY"]
 DEFAULT_VALUE = "TBD"
 MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 
@@ -453,7 +454,7 @@ def _add_order(
         return False  # sort de la méthode
 
     # le fichier _outcome doit posséder un certain format
-    if _outcome.fieldnames.__eq__(STOCKS_ORDERS_HEADER):
+    if _outcome.fieldnames.__eq__(ORDERS_HEADER):
         # on crée une ligne dans le fichier csv
         row = {
             "DATE": _date.strftime("%Y/%m/%d"),
@@ -552,7 +553,7 @@ def group_all_stock_market_order(_outcome: str):
     """
 
     outcome = open(_outcome, "w")
-    writer = csv.DictWriter(outcome, fieldnames=STOCKS_ORDERS_HEADER)
+    writer = csv.DictWriter(outcome, fieldnames=ORDERS_HEADER)
     writer.writeheader()
 
     # pour chaque fichier .csv trouvé dans le répertoire PATH
@@ -682,7 +683,7 @@ def group_and_sort_all_stock_market_order(_outcome):
     """
     assets = []
     outcome = open(_outcome, "w")
-    writer = csv.DictWriter(outcome, fieldnames=STOCKS_ORDERS_HEADER)
+    writer = csv.DictWriter(outcome, fieldnames=ORDERS_HEADER)
     writer.writeheader()
 
     # pour chaque fichier .csv trouvé dans le répertoire PATH
@@ -905,13 +906,25 @@ def list_all_stockMarket_dividend(_outcome):
     return True
 
 
-def get_stockMarket_portfolio(_input, _output):
-    FIELDNAMES = ["BROKER", "TICKER", "ISIN", "QUANTITY", "UNIT PRICE", "CURRENCY"]
+def get_portfolio(_input: str, _outcome: str):
+    """
+    ...\n
+
+    Args:
+        _input (str) : complete path of the csv file
+        _output (str) : complete path of the csv file
+
+    Returns:
+        True if market order is correctly added in ``_outcome``, False if not
+    """
+
+    input = open(_input, "r")
+    outcome = open(_outcome, "w")
 
     assets = {}
 
     # initialisation du fichier de résultat
-    reader = csv.DictReader(_input)
+    reader = csv.DictReader(input)
 
     for row in reader:
         if row["TICKER"] in assets:
@@ -965,7 +978,7 @@ def get_stockMarket_portfolio(_input, _output):
 
         assets[row["TICKER"]] = asset_value
 
-    writer = csv.DictWriter(_output, fieldnames=FIELDNAMES)
+    writer = csv.DictWriter(outcome, fieldnames=PORTFOLIO_HEADER)
     writer.writeheader()
 
     for asset in sorted(assets):
@@ -1028,11 +1041,12 @@ def main():
             print()
             print()
             group_and_sort_all_stock_market_order(
-                open(BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv", "w")
+                BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv"
             )
-            assets = get_stockMarket_portfolio(
-                open(BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv", "r"),
-                open(BROKERS_DATA_PATH + "/portfolio.csv", "w"),
+
+            assets = get_portfolio(
+                BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv",
+                BROKERS_DATA_PATH + "/portfolio.csv",
             )
 
         case "4":  # LISTER LES DIVIDENDES VERSES & LES IMPOTS DEJA PRELEVES
