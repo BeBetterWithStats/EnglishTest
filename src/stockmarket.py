@@ -1058,14 +1058,14 @@ def main():
             )
             print()
             print()
-            group_and_sort_all_stockMarket_order(BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv")
+            group_and_sort_all_stock_market_order(BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv")
 
         case "3":  # DONNER LA COMPOSITION D'UN PORTEFEUILLE
             print()
             print(f"🔜 Le résultat sera disponible dans {BROKERS_DATA_PATH}/portfolio.csv")
             print()
             print()
-            group_and_sort_all_stockMarket_order(
+            group_and_sort_all_stock_market_order(
                 open(BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv", "w")
             )
             assets = get_stockMarket_portfolio(
