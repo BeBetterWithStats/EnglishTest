@@ -367,13 +367,13 @@ def _find_broker(_file) -> tuple:
             return "REVOLUT", ["_add_dividend", "_add_order"]
 
         if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_1):
-            return "TRADING 212", ["_add_dividend", "_add_order"]
+            return "TRADING 212", ["_add_order"]
 
         if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_2):
-            return "TRADING 212", ["_add_dividend", "_add_order"]
+            return "TRADING 212", ["_add_order"]
 
         if reader.fieldnames.__eq__(FIELDNAMES_TRADING212_V_3):
-            return "TRADING 212", ["_add_dividend", "_add_order"]
+            return "TRADING 212", ["_add_order"]
 
     return "", None
 
@@ -871,6 +871,7 @@ def list_all_dividend(_outcome: str):
 
     # pour chaque fichier .csv trouvé dans le répertoire PATH
     for f in [x for x in list_fileNames(BROKERS_DATA_PATH) if str(x).endswith(".csv")]:
+        print()
         print(f"📄 Lecture du fichier '{f}'")
 
         with open(f) as file:
@@ -1112,8 +1113,10 @@ def main():
             ]:
                 print(_find_broker(f))
 
+        #######################################
         # sandbox
         # scenario à venir
+        #######################################
         case "_yfinance":
             msft = yfinance.Ticker("CNDX")
             print("isin = " + msft.get_isin())
@@ -1135,7 +1138,6 @@ def main():
             print(api_json)
 
         case _:
-            # print()
             print("❌ ce choix n'existe pas")
 
     finish = end_program()
