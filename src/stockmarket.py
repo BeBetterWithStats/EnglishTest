@@ -985,7 +985,7 @@ def get_portfolio(_input: str, _outcome: str):
     writer = csv.DictWriter(outcome, fieldnames=PORTFOLIO_HEADER)
     writer.writeheader()
 
-    for asset in sorted(assets):
+    for asset in sorted(assets): # @TODO trier par broker 
         row = {
             "BROKER": assets[asset]["broker"],
             "ID (ticker or isin)": asset,
