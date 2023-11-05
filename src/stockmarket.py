@@ -1061,18 +1061,18 @@ def main():
             print()
             print()
             group_all_stock_market_order(
-                BROKERS_DATA_PATH + "/all stockmarket orders.csv"
+                BROKERS_DATA_PATH + "/WXYZ orders.csv"
             )
 
         case "2":  # LISTER ET CLASSER TOUTES LES OPERATIONS ACHAT / VENTE DE TITRE
             print()
             print(
-                f"🔜 Le résultat sera disponible dans {BROKERS_DATA_PATH}/all stockmarket orders (sorted).csv"
+                f"🔜 Le résultat sera disponible dans {BROKERS_DATA_PATH}/WXYZ orders (sorted).csv"
             )
             print()
             print()
             group_and_sort_all_stock_market_order(
-                BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv"
+                BROKERS_DATA_PATH + "/WXYZ orders (sorted).csv"
             )
 
         case "3":  # DONNER LA COMPOSITION D'UN PORTEFEUILLE
@@ -1083,12 +1083,12 @@ def main():
             print()
             print()
             group_and_sort_all_stock_market_order(
-                BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv"
+                BROKERS_DATA_PATH + "/WXYZ orders (sorted).csv"
             )
 
             assets = get_portfolio(
-                BROKERS_DATA_PATH + "/all stockmarket orders (sorted).csv",
-                BROKERS_DATA_PATH + "/portfolio.csv",
+                BROKERS_DATA_PATH + "/WXYZ orders (sorted).csv",
+                BROKERS_DATA_PATH + "/WXYZ portfolio.csv",
             )
 
         case "4":  # LISTER LES DIVIDENDES VERSES & LES IMPOTS DEJA PRELEVES
@@ -1099,7 +1099,7 @@ def main():
             print()
             print()
             list_all_dividend(
-                open(BROKERS_DATA_PATH + "/all stockmarket dividend.csv", "w")
+                open(BROKERS_DATA_PATH + "/WXYZ dividend.csv", "w")
             )
 
         case "_find_broker":
