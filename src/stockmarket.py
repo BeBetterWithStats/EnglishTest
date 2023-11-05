@@ -19,7 +19,7 @@ BROKERS_DATA_PATH = (
 )
 
 ORDER_TYPES = ["BUY", "SELL"]
-DIVIDEND_TYPES = ["DIVIDEND", "TAX"]
+DIVIDEND_TYPES = ["DIVIDEND", "TAX", "NET DIVIDEND"]
 
 ORDER_HEADER = [
     "DATE",
@@ -920,7 +920,7 @@ def list_all_dividend(_outcome: str):
                         # mapping du type d'opération
                         match str(row[2]).upper():
                             case "DIVIDEND":
-                                type = DIVIDEND_TYPES[0]
+                                type = DIVIDEND_TYPES[2] # montant net
                             case _:
                                 type = row[2]
                                 continue
