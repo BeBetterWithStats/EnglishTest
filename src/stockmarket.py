@@ -12,6 +12,7 @@ from forex_python.converter import CurrencyRates
 
 # FIN -- IMPORTS
 
+MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 
 BROKERS_DATA_PATH = (
     "/Users/alexandrelods/Documents/Developpement/PythonCode/data/stocks"
@@ -19,8 +20,8 @@ BROKERS_DATA_PATH = (
 
 ORDER_TYPES = ["BUY", "SELL"]
 DIVIDEND_TYPES = ["DIVIDEND", "TAX"]
-ALL_TYPES = ORDER_TYPES + DIVIDEND_TYPES
-ORDERS_HEADER = [
+
+ORDER_HEADER = [
     "DATE",
     "BROKER",
     "TYPE",
@@ -38,8 +39,15 @@ PORTFOLIO_HEADER = [
     "UNIT PRICE",
     "CURRENCY",
 ]
-DEFAULT_VALUE = "TBD"
-MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
+DIVIDEND_HEADER = [
+    "DATE",
+    "BROKER",
+    "TYPE",
+    "TICKER",
+    "ISIN",
+    "AMOUNT",
+    "CURRENCY",
+]
 
 ##########################################################################
 # FONCTIONS UTILITAIRES A RECOPIER
@@ -402,7 +410,7 @@ def _add_order(
         _row (str, optional) : original line in the broker's file
 
     Returns:
-        True if market order is correctly added in ``_file``, False if not
+        True if market order is correctly added in ``_outcome``, False if not
     """
 
     # le controle que _date est une date est effectué
@@ -460,7 +468,7 @@ def _add_order(
         return False  # sort de la méthode
 
     # le fichier _outcome doit posséder un certain format
-    if _outcome.fieldnames.__eq__(ORDERS_HEADER):
+    if _outcome.fieldnames.__eq__(ORDER_HEADER):
         # on crée une ligne dans le fichier csv
         row = {
             "DATE": _date.strftime("%Y/%m/%d"),
@@ -484,8 +492,7 @@ def _add_order(
 
 # @TODO retirer la référence à _file et _fieldnames puisque ces deniers sont fixés par le programme lui même
 def _add_dividend(
-    _file,
-    _fieldnames,
+    _outcome: csv.DictWriter,
     _date: datetime,
     _broker: str,
     _type: str,
@@ -499,8 +506,7 @@ def _add_dividend(
     sa référence isin, sa référence de ticker, la monnaie du dividende perçu\n
 
     Args:
-        _file (str) : csv file name
-        _fieldnames (list) : à retirer
+        _outcome (csv.DictWriter) : csv file name
         _date (datetime) : execution date
         _broker (str) : broker's name
         _type (str) : one value in ["DIVIDEND", "TAX"]
@@ -510,12 +516,12 @@ def _add_dividend(
         _currency (str) : currency iso code (ex: EUR, USD, ...)
 
     Returns:
-        True if market order is correctly added in ``_file``, False if not
+        True if market order is correctly added in ``_outcome``, False if not
     """
 
     # controler que _type est une valeur connue
     # les seules valeurs autorisées sont celles de la variable globale TYPES
-    if len([x for x in ALL_TYPES if str(x) == _type]) == 0:
+    if len([x for x in DIVIDEND_TYPES if str(x) == _type]) == 0:
         print(
             f"🚧 le paramètre _type n'est pas géré par l'application (valeur = '{_type}' pour {_broker})"
         )
@@ -532,8 +538,7 @@ def _add_dividend(
         "CURRENCY": _currency,
     }
 
-    writer = csv.DictWriter(_file, fieldnames=_fieldnames)
-    writer.writerow(row)
+    _outcome.writerow(row)
 
     return True
 
@@ -559,7 +564,7 @@ def group_all_stock_market_order(_outcome: str):
     """
 
     outcome = open(_outcome, "w")
-    writer = csv.DictWriter(outcome, fieldnames=ORDERS_HEADER)
+    writer = csv.DictWriter(outcome, fieldnames=ORDER_HEADER)
     writer.writeheader()
 
     # pour chaque fichier .csv trouvé dans le répertoire PATH
@@ -611,12 +616,12 @@ def group_all_stock_market_order(_outcome: str):
                         # mapping du type d'opération
                         match str(row[0]).upper():
                             case "MARKET BUY":
-                                type = ALL_TYPES[0]
+                                type = ORDER_TYPES[0]
                                 quantity = row[5].replace(",", "").replace("-", "")
                                 price = row[6].replace(",", "").replace("-", "")
                                 amount = round(float(quantity) * float(price), 3)
                             case "MARKET SELL":
-                                type = ALL_TYPES[1]
+                                type = ORDER_TYPES[1]
                                 quantity = row[5].replace(",", "").replace("-", "")
                                 price = row[6].replace(",", "").replace("-", "")
                                 amount = round(float(quantity) * float(price), 3)
@@ -635,10 +640,10 @@ def group_all_stock_market_order(_outcome: str):
                         # mapping du type d'opération
                         match str(row[2]).upper():
                             case "BUY - MARKET":
-                                type = ALL_TYPES[0]
+                                type = ORDER_TYPES[0]
                                 quantity = row[3]
                             case "SELL - MARKET":
-                                type = ALL_TYPES[1]
+                                type = ORDER_TYPES[1]
                                 quantity = row[3]
                             case _:
                                 type = row[2]
@@ -689,7 +694,7 @@ def group_and_sort_all_stock_market_order(_outcome):
     """
     assets = []
     outcome = open(_outcome, "w")
-    writer = csv.DictWriter(outcome, fieldnames=ORDERS_HEADER)
+    writer = csv.DictWriter(outcome, fieldnames=ORDER_HEADER)
     writer.writeheader()
 
     # pour chaque fichier .csv trouvé dans le répertoire PATH
@@ -741,12 +746,12 @@ def group_and_sort_all_stock_market_order(_outcome):
                         # mapping du type d'opération
                         match str(row[0]).upper():
                             case "MARKET BUY":
-                                type = ALL_TYPES[0]
+                                type = ORDER_TYPES[0]
                                 quantity = row[5].replace(",", "").replace("-", "")
                                 price = row[6].replace(",", "").replace("-", "")
                                 amount = round(float(quantity) * float(price), 3)
                             case "MARKET SELL":
-                                type = ALL_TYPES[1]
+                                type = ORDER_TYPES[1]
                                 quantity = row[5].replace(",", "").replace("-", "")
                                 price = row[6].replace(",", "").replace("-", "")
                                 amount = round(float(quantity) * float(price), 3)
@@ -765,10 +770,10 @@ def group_and_sort_all_stock_market_order(_outcome):
                         # mapping du type d'opération
                         match str(row[2]).upper():
                             case "BUY - MARKET":
-                                type = ALL_TYPES[0]
+                                type = ORDER_TYPES[0]
                                 quantity = row[3]
                             case "SELL - MARKET":
-                                type = ALL_TYPES[1]
+                                type = ORDER_TYPES[1]
                                 quantity = row[3]
                             case _:
                                 type = row[2]
@@ -849,19 +854,19 @@ def group_and_sort_all_stock_market_order(_outcome):
 
 # lister l'ensemble des dividendes
 # dans le fichier CSV @param _outcome
-def list_all_stockMarket_dividend(_outcome):
-    FIELDNAMES = [
-        "DATE",  # TODO mettre la date en notation américaine
-        "BROKER",
-        "TYPE",
-        "TICKER",
-        "ISIN",
-        "AMOUNT",
-        "CURRENCY",
-    ]
+def list_all_dividend(_outcome: str):
+    """
+    Liste les dividendes perçus des différents brokers dans le fichier .CSV ``_outcome``\n
+
+    Args:
+        _outcome (str) : complete path of the csv file
+
+    Returns:
+        True if dividend is correctly added in ``_outcome``, False if not
+    """
 
     # initialisation du fichier de résultat
-    writer = csv.DictWriter(_outcome, fieldnames=FIELDNAMES)
+    writer = csv.DictWriter(_outcome, fieldnames=DIVIDEND_HEADER)
     writer.writeheader()
 
     # pour chaque fichier .csv trouvé dans le répertoire PATH
@@ -869,46 +874,80 @@ def list_all_stockMarket_dividend(_outcome):
         print(f"📄 Lecture du fichier '{f}'")
 
         with open(f) as file:
-            reader = csv.DictReader(file)
+            reader = csv.reader(file)
 
             # recherche du broker
-            brocker_to_uppercase = str(f).upper().split(" ")[0]
-            # print(f"[DEBUG] broker = '{brocker_to_uppercase}'")
+            brocker_name, brocker_operation = _find_broker(str(f))
 
-            # TODO revoir la recherche de brocker à l'aide de REGEX
+            # si le fichier du brocker n'est pas compatible avec la fonctionnalité
+            if not brocker_operation or not "_add_dividend" in brocker_operation:
+                print(
+                    f"❌ le fichier n'est pas compatible avec la fonctionnalité ``dividend``"
+                )
+                continue
+            else:
+                print(
+                    f"✅ le fichier est compatible avec la fonctionnalité ``dividend``"
+                )
 
-            match brocker_to_uppercase:
-                case "DEGIRO":
-                    # pour chaque ligne du fichier du broker
-                    for row in reader:
+            is_header = True
+            # pour chaque ligne du fichier csv
+            for row in reader:
+                # pour retirer la ligne d'entete de chaque fichier csv
+                if is_header:
+                    is_header = False
+                    continue
+
+                match brocker_name:
+                    case "DEGIRO":
                         # mapping du type d'opération
-                        match str(row["Description"]).upper().split():
+                        match str(row[5]).upper().split(" ")[0]:
                             case "DIVIDENDE":
-                                type = ALL_TYPES[2]
-                            case "IMPOTS SUR DIVIDENDE":
-                                type = ALL_TYPES[3]
+                                type = DIVIDEND_TYPES[0]
+                            case "IMPÔTS":
+                                type = DIVIDEND_TYPES[1]
                             case _:
-                                type = row["Description"]
+                                type = row[5]
+                                continue
 
-                        # ajoute à _outcome les données présentes dans chaque fichier du broker
-                        _add_dividend(
-                            _outcome,  # _file
-                            FIELDNAMES,
-                            datetime.strptime(
-                                row["Date"] + " " + row["Heure"], "%d-%m-%Y %H:%M"
-                            ),  # _date
-                            brocker_to_uppercase,  # _broker
-                            type,  # _type
-                            "NA",  # _tickerCode
-                            row["Code ISIN"],  # _isinCode
-                            row[""],
-                            row["Mouvements"],
-                        )
-                case _:
-                    print(f"🚧 Broker '{brocker_to_uppercase}' non géré")
-                    print(f"  Revoir le nom du fichier")
-                    print(f"  ou ajouter le broker au programme stocks.py")
+                        date = datetime.strptime(row[0] + " " + row[1], "%d-%m-%Y %H:%M")
+                        tickerCode = ""
+                        isinCode = row[4]
+                        amount = row[8]
+                        currency =row[7]
 
+                    case "REVOLUT":
+                        # mapping du type d'opération
+                        match str(row[2]).upper():
+                            case "DIVIDEND":
+                                type = DIVIDEND_TYPES[0]
+                            case _:
+                                type = row[2]
+                                continue
+
+                        date = datetime.fromisoformat(row[0])
+                        tickerCode = row[1]
+                        isinCode = ""
+                        amount = str(row[5])[1:].replace(",", "").replace("-", "")
+                        currency =row[6]
+
+                    case _:
+                        print(f"🚧 Broker '{brocker_name}' non géré")
+                        print(f"  Revoir le nom du fichier")
+                        print(f"  ou ajouter le broker au programme stocks.py")
+                        continue
+
+                # ajoute à _outcome les données présentes dans chaque fichier du broker
+                _add_dividend(
+                    writer,
+                    date,
+                    brocker_name,
+                    type,
+                    tickerCode,
+                    isinCode,
+                    amount,
+                    currency,
+                )
     return True
 
 
@@ -985,7 +1024,7 @@ def get_portfolio(_input: str, _outcome: str):
     writer = csv.DictWriter(outcome, fieldnames=PORTFOLIO_HEADER)
     writer.writeheader()
 
-    for asset in sorted(assets): # @TODO trier par broker 
+    for asset in sorted(assets):  # @TODO trier par broker
         row = {
             "BROKER": assets[asset]["broker"],
             "ID (ticker or isin)": asset,
@@ -1059,7 +1098,7 @@ def main():
             )
             print()
             print()
-            list_all_stockMarket_dividend(
+            list_all_dividend(
                 open(BROKERS_DATA_PATH + "/all stockmarket dividend.csv", "w")
             )
 
