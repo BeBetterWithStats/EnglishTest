@@ -1,4 +1,6 @@
-# PythonCode
+# Python Classroom
+
+Espace dédié à l'apprentissage des programmes Harvard CS50's
 
 ## :movie_camera: Youtube
 Utilitaire permettant de télécharger la vidéo Youtube dont l'url a été passée en paramètre de la ligne de commande. Si le paramètre est absent, une invitation de commande `input()` permettra à l'utilisateur de saisir l'URL de la vidéo.
