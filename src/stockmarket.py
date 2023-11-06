@@ -10,7 +10,7 @@ import json
 from datetime import datetime
 from forex_python.converter import CurrencyRates
 
-# FIN -- IMPORTS 
+# FIN -- IMPORTS
 
 MS_API_ACCESS_KEY = "89497626879422c72731d9e603dac6a8"
 
